@@ -1,35 +1,50 @@
 package daos;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.Mongo;
+import com.mongodb.*;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
+import connections.ConnectionFactory;
 import models.User;
+import org.bson.Document;
 
-import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
-/**
- * Created by Illidan Stormrage on 08/03/2016.
- */
 public class UserDAO {
 
-    private DBCollection coll;
+//    private Mongo mongo;
+//    private DB db;
+    private MongoCollection<Document> coll;
 
-    public UserDAO(){
-        try {
-            coll = new Mongo("127.0.0.1",27017).getDB("findme").getCollection("users");
-        } catch (UnknownHostException e) {
-            System.out.print("Erreur de connexion à la base de données");
-            e.printStackTrace();
-        }
+    private User constructUser(DBObject dbObject){
+
+        return null;
     }
 
-    public User insert(String... parameters){
-        DBObject db = new BasicDBObject();
-        for (String parameter : parameters) {
-            db.put("jesaispas",parameter);
+    public UserDAO(){
+            coll = ConnectionFactory.getMongoConnection().getCollection("bob");
+    }
+
+    public List<User> getall(){
+        List<User> list = new ArrayList<User>();
+        MongoCursor<Document> cursor = coll.find().iterator();
+        try {
+            while (cursor.hasNext()) {
+                System.out.println(cursor.next().toJson());
+            }
+        } finally {
+            cursor.close();
         }
-        coll.insert(db);
+        return list;
+    }
+
+    public User insertOne(Map<String,String> values){
+        Document doc = new Document();
+        for (Map.Entry<String, String> entry : values.entrySet()) {
+            doc.append(entry.getKey(),entry.getValue());
+        }
+        coll.insertOne(doc);
         return null;
     }
 
