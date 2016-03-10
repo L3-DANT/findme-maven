@@ -25,7 +25,6 @@ public class UserDAO {
     }
 
     public List<User> getall(){
-        insertOne("{\"pseudo\":\"Bob\",\"x\":\"13.5\",\"y\":\"22.1\"}");
         List<User> list = new ArrayList<User>();
         MongoCursor<Document> cursor = coll.find().iterator();
         try {
