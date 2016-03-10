@@ -1,24 +1,11 @@
 package models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.bson.types.ObjectId;
 
-@Entity
 public class User {
 
-    private Integer id;
     private String pseudo;
     private float x,y;
-
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public String getPseudo() {
         return pseudo;
@@ -42,5 +29,9 @@ public class User {
 
     public void setY(float y) {
         this.y = y;
+    }
+
+    public String toString(){
+        return"User _id, pseudo:"+getPseudo()+",x:"+x+",y:"+y;
     }
 }

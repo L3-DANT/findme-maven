@@ -3,6 +3,7 @@ package controllers;
 import models.User;
 import services.UserService;
 
+import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -11,6 +12,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+@RequestScoped
 @Path("/users")
 public class UserController {
 
@@ -23,9 +25,12 @@ public class UserController {
     public JsonArray getAll(){
         JsonArrayBuilder builder = Json.createArrayBuilder();
         for (User user : userService.getAll()) {
-            builder.add(Json.createObjectBuilder().add("id",user.getId()));
+            builder.add(Json.createObjectBuilder().add("pseudo",user.getPseudo()));
+            builder.add(Json.createObjectBuilder().add("x",user.getX()));
+            builder.add(Json.createObjectBuilder().add("y",user.getY()));
         }
         return builder.build();
 
     }
+
 }
