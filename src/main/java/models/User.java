@@ -31,7 +31,4 @@ public class User {
         this.y = y;
     }
 
-    public String toString(){
-        return"User _id, pseudo:"+getPseudo()+",x:"+x+",y:"+y;
-    }
 }

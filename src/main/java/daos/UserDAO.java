@@ -21,10 +21,11 @@ public class UserDAO {
     private MongoCollection<Document> coll;
 
     public UserDAO(){
-            coll = ConnectionFactory.getMongoConnection().getCollection("users");
+            coll = ConnectionFactory.getMongoConnection().getCollection("user");
     }
 
-    public List<User> getall(){
+    public List<User> findAll(){
+        insertOne("{\"pseudo\":\"Bob\",\"x\":\"13.5\",\"y\":\"22.1\"}");
         List<User> list = new ArrayList<User>();
         MongoCursor<Document> cursor = coll.find().iterator();
         try {

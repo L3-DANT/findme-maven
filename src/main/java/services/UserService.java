@@ -18,7 +18,7 @@ public class UserService {
     @Inject
     private UserDAO dao;
 
-    public List<User> getAll() {
-        return dao.getall();
+    public List<User> findAll() {
+        return dao.findAll();
     }
 }
