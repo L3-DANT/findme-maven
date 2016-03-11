@@ -1,8 +1,8 @@
 package models;
 
-import org.bson.types.ObjectId;
+import java.io.Serializable;
 
-public class User {
+public class User implements Serializable, Comparable<User> {
 
     private String pseudo;
     private float x,y;
@@ -31,4 +31,28 @@ public class User {
         this.y = y;
     }
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		User user = (User) o;
+
+		return pseudo.equals(user.pseudo);
+
+	}
+
+	@Override
+	public int hashCode() {
+		return pseudo.hashCode();
+	}
+
+	@Override
+	public String toString() {
+		return pseudo;
+	}
+
+	public int compareTo(User o) {
+		return pseudo.compareTo(o.pseudo);
+	}
 }

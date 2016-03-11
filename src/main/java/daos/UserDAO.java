@@ -3,7 +3,7 @@ package daos;
 import com.google.gson.Gson;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import connections.ConnectionFactory;
+import connections.MongoConnection;
 import models.User;
 import org.bson.Document;
 
@@ -16,12 +16,10 @@ import java.util.List;
 @Stateless
 public class UserDAO {
 
-//    private Mongo mongo;
-//    private DB db;
     private MongoCollection<Document> coll;
 
     public UserDAO(){
-            coll = ConnectionFactory.getMongoConnection().getCollection("user");
+            coll = MongoConnection.getDb().getCollection("user");
     }
 
     public List<User> findAll(){
