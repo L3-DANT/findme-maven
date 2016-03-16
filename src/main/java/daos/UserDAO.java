@@ -3,6 +3,7 @@ package daos;
 import com.google.gson.Gson;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
+import com.mongodb.client.model.IndexOptions;
 import connections.MongoConnection;
 import models.User;
 import org.bson.Document;
@@ -19,11 +20,11 @@ public class UserDAO {
     private MongoCollection<Document> coll;
 
     public UserDAO(){
-            coll = MongoConnection.getDb().getCollection("user");
+        coll = MongoConnection.getDb().getCollection("user");
+        coll.createIndex(new Document("pseudo",1),new IndexOptions().unique(true));
     }
 
     public List<User> findAll(){
-        insertOne("{\"pseudo\":\"Gérard\",\"x\":\"13.5\",\"y\":\"22.1\"}");
         List<User> list = new ArrayList<User>();
         MongoCursor<Document> cursor = coll.find().iterator();
         try {
@@ -32,12 +33,12 @@ public class UserDAO {
             }
         } finally {
             cursor.close();
-        }
+    }
         return list;
     }
 
-    public void insertOne(String json){
-        Document doc = new Document(Document.parse(json));
+    public void insertOne(User user){
+        Document doc = new Document(Document.parse(new Gson().toJson(user)));
         coll.insertOne(doc);
     }
 

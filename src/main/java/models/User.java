@@ -2,10 +2,24 @@ package models;
 
 import java.io.Serializable;
 
-public class User implements Serializable, Comparable<User> {
+public class User implements Serializable {
 
     private String pseudo;
     private float x,y;
+
+    public User(){
+        this(null, 0,0);
+    }
+
+    public User(String pseudo){
+        this(pseudo,0,0);
+    }
+
+    public User(String pseudo,float x, float y){
+        this.pseudo = pseudo;
+        this.x = x;
+        this.y = y;
+    }
 
     public String getPseudo() {
         return pseudo;
@@ -33,13 +47,7 @@ public class User implements Serializable, Comparable<User> {
 
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		User user = (User) o;
-
-		return pseudo.equals(user.pseudo);
-
+        return o instanceof User && ((User) o).getPseudo().equals(this.pseudo);
 	}
 
 	@Override
@@ -47,12 +55,5 @@ public class User implements Serializable, Comparable<User> {
 		return pseudo.hashCode();
 	}
 
-	@Override
-	public String toString() {
-		return pseudo;
-	}
 
-	public int compareTo(User o) {
-		return pseudo.compareTo(o.pseudo);
-	}
 }
