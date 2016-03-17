@@ -1,6 +1,7 @@
 package daos;
 
 import com.google.gson.Gson;
+import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.IndexOptions;
@@ -33,14 +34,32 @@ public class UserDAO {
             }
         } finally {
             cursor.close();
-    }
+        }
         return list;
     }
 
     public void insertOne(User user){
         Document doc = new Document(Document.parse(new Gson().toJson(user)));
-        coll.insertOne(doc);
+        try{
+            coll.insertOne(doc);
+        } catch(MongoException e){
+            e.printStackTrace();
+            System.out.println("User "+user.getPseudo()+" already exists in database.");
+        }
     }
 
+    public void replaceOne(User formerUser, User newUser){
+        if(!formerUser.equals(newUser)){
+            throw new MongoException("Provided users don't match.");
+        }
+        Document formerDoc = new Document("pseudo",formerUser.getPseudo());
+        Document newDoc =  new Document(Document.parse(new Gson().toJson(newUser)));
+        coll.replaceOne(formerDoc,newDoc);
+    }
+
+    public void deleteOne(User user){
+        Document doc = new Document("pseudo",user.getPseudo());
+        coll.deleteOne(doc);
+    }
 
 }

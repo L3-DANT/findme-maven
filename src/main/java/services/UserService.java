@@ -25,12 +25,12 @@ public class UserService {
 
     public List<User> insertTest(){
         List<User> list = new ArrayList<User>();
-        list.add(new User("Antoine",124f,127f));
-        list.add(new User("François",42f,42f));
-        list.add(new User("Maxime",147f,25845f));
-        list.add(new User("Nicolas",7984f,98f));
-        list.add(new User("Adrien",48f,878f));
-        list.add(new User("Olivier",0f,0f));
+        list.add(new User("Antoine","123", 124f,127f));
+        list.add(new User("François","123", 42f,42f));
+        list.add(new User("Maxime","123", 147f,25845f));
+        list.add(new User("Nicolas","123", 7984f,98f));
+        list.add(new User("Adrien","123", 48f,878f));
+        list.add(new User("Olivier","123", 0f,0f));
         for (User user : list) {
             dao.insertOne(user);
         }

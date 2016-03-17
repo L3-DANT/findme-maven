@@ -24,9 +24,10 @@ public class UserController {
         return new Gson().toJson(userService.findAll());
     }
 
-    @Path("/insertTest")
+    @Path(" /fixtures")
     @GET
     public String insertTest(){
         return new Gson().toJson(userService.insertTest());
     }
+
 }
