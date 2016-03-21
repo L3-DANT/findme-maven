@@ -1,11 +1,30 @@
 package models;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class User implements Serializable, Comparable<User> {
+public class User implements Serializable {
 
-    private String pseudo;
+    private String pseudo,password;
     private float x,y;
+    private List<User> friendList;
+
+    public User(){
+        this(null, null,0,0);
+    }
+
+    public User(String pseudo, String password){
+        this(pseudo,password,0,0);
+    }
+
+    public User(String pseudo, String password,float x, float y){
+        this.pseudo = pseudo;
+        this.password = password;
+        this.x = x;
+        this.y = y;
+        this.friendList = new ArrayList<User>();
+    }
 
     public String getPseudo() {
         return pseudo;
@@ -14,6 +33,8 @@ public class User implements Serializable, Comparable<User> {
     public void setPseudo(String pseudo) {
         this.pseudo = pseudo;
     }
+
+    public void setPassword(String password) { this.password = password; }
 
     public float getX() {
         return x;
@@ -31,15 +52,21 @@ public class User implements Serializable, Comparable<User> {
         this.y = y;
     }
 
+    public List<User> getFriendList(){
+        return friendList;
+    }
+
+    public void addFriend(User u){
+        friendList.add(u);
+    }
+
+    public void removeFriend(String pseudo){
+       friendList.remove(new User(pseudo,null));
+    }
+
 	@Override
 	public boolean equals(Object o) {
-		if (this == o) return true;
-		if (o == null || getClass() != o.getClass()) return false;
-
-		User user = (User) o;
-
-		return pseudo.equals(user.pseudo);
-
+        return o instanceof User && ((User) o).getPseudo().equals(this.pseudo);
 	}
 
 	@Override
@@ -47,12 +74,5 @@ public class User implements Serializable, Comparable<User> {
 		return pseudo.hashCode();
 	}
 
-	@Override
-	public String toString() {
-		return pseudo;
-	}
 
-	public int compareTo(User o) {
-		return pseudo.compareTo(o.pseudo);
-	}
 }
