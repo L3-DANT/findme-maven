@@ -23,12 +23,22 @@ e=n.propHooks[b]),void 0!==c?e&&"set"in e&&void 0!==(d=e.set(a,c,b))?d:a[b]=c:e&
 	</script>
 	<script>
 	$('#submit').on('click',function(){
+
+		var demande = {
+			asker: "coucou",
+			receiver: "cici"
+		};
+
 		$.ajax({
-       		url : 'http://localhost:8080/findme/api/user/'+ $('#url').val(),
-       		type : $('#type').val(),
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json'
+			},
+       		url : 'http://localhost:8080/findme/api/user/'+ 'v1/createDemande', //$('#url').val(),
+       		type : 'PUT', //$('#type').val(),
        		dataType : 'json',
-       		data: $('#data').val(),
-       		'contentType': 'application/json',
+       		data: demande, //$('#data').val(),
+			contentType: 'application/json',
        		success : function(code_html) {
 				$('#result').html((JSON.stringify(code_html)));
        		}
