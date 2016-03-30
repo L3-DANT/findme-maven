@@ -5,15 +5,17 @@ import services.UserService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.IOException;
 
 @RequestScoped
 @Path("/user")
 @Produces("application/json")
-public class UserController {
+public class UserController implements ContainerResponseFilter {
 
     @Inject
     private UserService userService;
@@ -24,10 +26,18 @@ public class UserController {
         return new Gson().toJson(userService.findAll());
     }
 
-    @Path(" /fixtures")
+    @Path("/fixtures")
     @GET
     public String insertTest(){
         return new Gson().toJson(userService.insertTest());
     }
 
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        final MultivaluedMap<String,Object> headers = responseContext.getHeaders();
+
+        headers.add("Access-Control-Allow-Origin", "*");
+        headers.add("Access-Control-Allow-Headers", "Authorization, Origin, X-Requested-With, Content-Type");
+        headers.add("Access-Control-Expose-Headers", "Location, Content-Disposition");
+        headers.add("Access-Control-Allow-Methods", "POST, PUT, GET, DELETE, HEAD, OPTIONS");
+    }
 }
