@@ -1,7 +1,6 @@
 package models;
 
-public class Demande {
-
+public class FriendRequest {
     private String asker;
     private String receiver;
     private State state;
@@ -9,13 +8,18 @@ public class Demande {
     enum State {
 
         NOT_VIEWED,ACCEPTED,DENIED;
-
     }
 
-    public Demande(String asker, String receiver){
-        this.asker = asker;
-        this.receiver = receiver;
+    public FriendRequest(){
         state = State.NOT_VIEWED;
+    }
+
+    public String getAsker() {
+        return asker;
+    }
+
+    public String getReceiver() {
+        return receiver;
     }
 
     public void setAsker(String asker) {
@@ -32,5 +36,9 @@ public class Demande {
 
     public void setState(State state) {
         this.state = state;
+    }
+
+    public String toString(){
+        return "asker:"+asker+"/receiver:"+receiver+"/state:"+state;
     }
 }

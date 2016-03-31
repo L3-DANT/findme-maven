@@ -1,7 +1,6 @@
 package controllers;
 
 import com.google.gson.Gson;
-import models.Demande;
 import services.UserService;
 
 import javax.enterprise.context.RequestScoped;
@@ -16,7 +15,7 @@ import java.io.IOException;
 @RequestScoped
 @Path("/user")
 @Produces("application/json")
-public class UserController implements ContainerResponseFilter {
+public class UserController{
 
     @Inject
     private UserService userService;
@@ -33,19 +32,4 @@ public class UserController implements ContainerResponseFilter {
         return new Gson().toJson(userService.insertTest());
     }
 
-    @Path("/v1/createDemande")
-    @PUT
-    @Consumes("application/json")
-    public String insertDemande(Demande demande){
-        return demande.toString();
-    }
-
-    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
-        final MultivaluedMap<String,Object> headers = responseContext.getHeaders();
-
-        headers.add("Access-Control-Allow-Origin", "*");
-        headers.add("Access-Control-Allow-Headers", "Accept, Authorization, Origin, X-Requested-With, Content-Type");
-        headers.add("Access-Control-Expose-Headers", "Location, Content-Disposition");
-        headers.add("Access-Control-Allow-Methods", "POST, PUT, GET, DELETE, HEAD, OPTIONS");
-    }
 }

@@ -14,7 +14,6 @@ import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 
-@Named
 @Stateless
 public class UserDAO {
 

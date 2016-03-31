@@ -8,7 +8,7 @@ public class User implements Serializable {
 
     private String pseudo,password;
     private float x,y;
-    private List<User> friendList;
+    private List<String> friendList;
 
     public User(){
         this(null, null,0,0);
@@ -23,7 +23,7 @@ public class User implements Serializable {
         this.password = password;
         this.x = x;
         this.y = y;
-        this.friendList = new ArrayList<User>();
+        this.friendList = new ArrayList<String>();
     }
 
     public String getPseudo() {
@@ -52,16 +52,16 @@ public class User implements Serializable {
         this.y = y;
     }
 
-    public List<User> getFriendList(){
+    public List<String> getFriendList(){
         return friendList;
     }
 
-    public void addFriend(User u){
-        friendList.add(u);
+    public void addFriend(String pseudo){
+        friendList.add(pseudo);
     }
 
     public void removeFriend(String pseudo){
-       friendList.remove(new User(pseudo,null));
+       friendList.remove(pseudo);
     }
 
 	@Override
