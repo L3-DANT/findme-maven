@@ -1,6 +1,7 @@
 package controllers;
 
 import com.google.gson.Gson;
+import models.User;
 import services.UserService;
 
 import javax.enterprise.context.RequestScoped;
@@ -32,4 +33,12 @@ public class UserController{
         return new Gson().toJson(userService.insertTest());
     }
 
+
+    @Path("v1/updateuser")
+    @POST
+    @Consumes("application/json")
+    public String setCoordinates(User user){
+        userService.updateUser(user);
+        return "";
+    }
 }

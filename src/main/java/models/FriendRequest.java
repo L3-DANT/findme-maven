@@ -5,9 +5,9 @@ public class FriendRequest {
     private String receiver;
     private State state;
 
-    enum State {
+    public enum State {
 
-        NOT_VIEWED,ACCEPTED,DENIED;
+        NOT_VIEWED,ACCEPTED,DECLINED;
     }
 
     public FriendRequest(){

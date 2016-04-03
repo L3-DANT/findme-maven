@@ -35,4 +35,9 @@ public class UserService {
         }
         return dao.findAll();
     }
+
+    public void updateUser(User user) {
+        User formerUser = dao.findOneByPseudo(user.getPseudo());
+
+    }
 }
