@@ -40,4 +40,19 @@ public class UserService {
         User formerUser = dao.findOneByPseudo(user.getPseudo());
 
     }
+
+    public void addFriend(User user1, User user2){
+        user1.setPassword(null);
+        user1.clearFriendList();
+        user2.setPassword(null);
+        user2.clearFriendList();
+
+        User userDB1 = dao.findOneByPseudo(user1.getPseudo());
+        userDB1.addFriend(user2);
+        dao.replaceOne(userDB1);
+
+        User userDB2 = dao.findOneByPseudo(user2.getPseudo());
+        userDB2.addFriend(user1);
+        dao.replaceOne(userDB2);
+    }
 }
