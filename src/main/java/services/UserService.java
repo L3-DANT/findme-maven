@@ -37,8 +37,7 @@ public class UserService {
     }
 
     public void updateUser(User user) {
-        User formerUser = dao.findOneByPseudo(user.getPseudo());
-
+        dao.replaceOne(user);
     }
 
     public void addFriend(User user1, User user2){
