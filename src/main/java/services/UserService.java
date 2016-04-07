@@ -55,4 +55,13 @@ public class UserService {
         userDB2.addFriend(user1);
         dao.replaceOne(userDB2);
     }
+
+    public User getFriendsCoordinates(User user) {
+        for (User friend : user.getFriendList()) {
+            User tmp = dao.findOneByPseudo(friend.getPseudo());
+            friend.setX(tmp.getX());
+            friend.setY(tmp.getY());
+        }
+        return user;
+    }
 }

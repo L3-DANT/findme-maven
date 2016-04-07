@@ -2,6 +2,8 @@ package controllers;
 
 
 import com.google.gson.Gson;
+import com.mongodb.util.JSONParseException;
+import exceptions.JSONException;
 import models.FriendRequest;
 import models.User;
 import services.FriendRequestService;
@@ -25,9 +27,9 @@ public class FriendRequestController {
     @Path("/v1/createfriendrequest")
     @PUT
     @Consumes("application/json")
-    public String insertFriendRequest(User... listUser) throws Exception {
+    public String insertFriendRequest(User... listUser) throws JSONException {
         if(listUser.length != 2) {
-            throw new Exception("");
+            throw new JSONException("Must provide exactly 2 users");
         } else {
             User asker = listUser[0];
             User receiver = listUser[1];
@@ -42,9 +44,9 @@ public class FriendRequestController {
     @Path("/v1/acceptfriendrequest")
     @POST
     @Consumes("application/json")
-    public String acceptFriendRequest(User... listUser) throws Exception {
+    public String acceptFriendRequest(User... listUser) throws JSONException {
         if(listUser.length != 2) {
-            throw new Exception("");
+            throw new JSONException("Must provide exactly 2 users");
         } else {
             User asker = listUser[0];
             User receiver = listUser[1];
@@ -57,9 +59,9 @@ public class FriendRequestController {
     @Path("/v1/declinefriendrequest")
     @POST
     @Consumes("application/json")
-    public String declineFriendRequest(User... listUser) throws Exception {
+    public String declineFriendRequest(User... listUser) throws JSONException {
         if(listUser.length != 2) {
-            throw new Exception("");
+            throw new JSONException("Must provide exactly 2 users");
         } else {
             User asker = listUser[0];
             User receiver = listUser[1];

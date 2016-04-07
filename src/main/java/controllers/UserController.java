@@ -37,8 +37,15 @@ public class UserController{
     @Path("v1/updateuser")
     @POST
     @Consumes("application/json")
-    public String setCoordinates(User user){
+    public String updateUser(User user){
         userService.updateUser(user);
-        return "";
+        return new Gson().toJson(user);
+    }
+
+    @Path("v1/getfriendscooordinates")
+    @GET
+    @Consumes("application/json")
+    public String getFriendsCoordinates(User user){
+        return new Gson().toJson(userService.getFriendsCoordinates(user));
     }
 }
