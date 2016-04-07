@@ -3,15 +3,10 @@ package models;
 public class FriendRequest {
     private String asker;
     private String receiver;
-    private State state;
 
-    public enum State {
-
-        NOT_VIEWED,ACCEPTED,DECLINED;
-    }
 
     public FriendRequest(){
-        state = State.NOT_VIEWED;
+
     }
 
     public String getAsker() {
@@ -30,15 +25,7 @@ public class FriendRequest {
         this.receiver = receiver;
     }
 
-    public State getState() {
-        return state;
-    }
-
-    public void setState(State state) {
-        this.state = state;
-    }
-
     public String toString(){
-        return "asker:"+asker+"/receiver:"+receiver+"/state:"+state;
+        return "asker:"+asker+"/receiver:"+receiver;
     }
 }

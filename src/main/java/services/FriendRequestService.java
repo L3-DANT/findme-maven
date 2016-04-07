@@ -18,14 +18,12 @@ public class FriendRequestService {
 
     public FriendRequest acceptFriendRequest(String asker, String receiver){
         FriendRequest fr = dao.findOneByAskerReceiver(asker,receiver);
-        fr.setState(FriendRequest.State.ACCEPTED);
         dao.replaceOne(fr);
         return fr;
     }
 
     public FriendRequest declineFriendRequest(String asker, String receiver) {
         FriendRequest fr = dao.findOneByAskerReceiver(asker,receiver);
-        fr.setState(FriendRequest.State.DECLINED);
         dao.replaceOne(fr);
         return fr;
     }
