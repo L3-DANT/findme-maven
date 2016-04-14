@@ -55,7 +55,7 @@ public class UserService {
         dao.replaceOne(userDB2);
     }
 
-    public User getFriendsCoordinates(User user) {
+    public User getUser(User user) {
         for (User friend : user.getFriendList()) {
             User tmp = dao.findOneByPseudo(friend.getPseudo());
             friend.setX(tmp.getX());

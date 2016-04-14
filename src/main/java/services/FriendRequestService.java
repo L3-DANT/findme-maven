@@ -16,15 +16,8 @@ public class FriendRequestService {
         dao.insertOne(fr);
     }
 
-    public FriendRequest acceptFriendRequest(String asker, String receiver){
-        FriendRequest fr = dao.findOneByAskerReceiver(asker,receiver);
-        dao.replaceOne(fr);
-        return fr;
+    public void deleteOne(String user1, String user2){
+        dao.deleteOne(new FriendRequest(user1,user2));
     }
 
-    public FriendRequest declineFriendRequest(String asker, String receiver) {
-        FriendRequest fr = dao.findOneByAskerReceiver(asker,receiver);
-        dao.replaceOne(fr);
-        return fr;
-    }
 }

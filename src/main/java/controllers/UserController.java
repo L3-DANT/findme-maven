@@ -1,6 +1,8 @@
 package controllers;
 
 import com.google.gson.Gson;
+import com.pusher.rest.Pusher;
+import connections.PusherConnection;
 import models.User;
 import services.UserService;
 
@@ -16,7 +18,7 @@ import java.io.IOException;
 @RequestScoped
 @Path("/user")
 @Produces("application/json")
-public class UserController{
+public class UserController extends Controller{
 
     @Inject
     private UserService userService;
@@ -33,6 +35,11 @@ public class UserController{
         return new Gson().toJson(userService.insertTest());
     }
 
+    @Path("testpusher")
+    @GET
+    public void testPusher(){
+        pusher.trigger("a","o","i");
+    }
 
     @Path("v1/updateuser")
     @POST
@@ -42,10 +49,10 @@ public class UserController{
         return new Gson().toJson(user);
     }
 
-    @Path("v1/getfriendscooordinates")
+    @Path("v1/getUser")
     @GET
     @Consumes("application/json")
-    public String getFriendsCoordinates(User user){
-        return new Gson().toJson(userService.getFriendsCoordinates(user));
+    public String getUser(User user){
+        return new Gson().toJson(userService.getUser(user));
     }
 }

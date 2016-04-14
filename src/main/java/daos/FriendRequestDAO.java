@@ -43,4 +43,8 @@ public class FriendRequestDAO {
         coll.replaceOne(formerDoc,newDoc);
     }
 
+    public void deleteOne(FriendRequest fr) {
+        Document doc = new Document("asker",fr.getAsker()).append("receiver",fr.getReceiver());
+        coll.deleteOne(doc);
+    }
 }

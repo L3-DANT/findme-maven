@@ -6,7 +6,12 @@ public class FriendRequest {
 
 
     public FriendRequest(){
+        this(null,null);
+    }
 
+    public FriendRequest(String asker, String receiver){
+        this.asker = asker;
+        this.receiver = receiver;
     }
 
     public String getAsker() {

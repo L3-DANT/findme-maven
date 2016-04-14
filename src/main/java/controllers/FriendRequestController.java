@@ -16,7 +16,7 @@ import javax.ws.rs.*;
 @RequestScoped
 @Path("/friendrequest")
 @Produces("application/json")
-public class FriendRequestController {
+public class FriendRequestController extends Controller{
 
     @Inject
     private FriendRequestService frService;
@@ -50,9 +50,9 @@ public class FriendRequestController {
         } else {
             User asker = listUser[0];
             User receiver = listUser[1];
-            FriendRequest fr = frService.acceptFriendRequest(asker.getPseudo(), receiver.getPseudo());
+            frService.deleteOne(asker.getPseudo(), receiver.getPseudo());
             userService.addFriend(asker, receiver);
-            return new Gson().toJson(fr);
+            return "{\"result\":\"true\"}";
         }
     }
 
@@ -65,8 +65,8 @@ public class FriendRequestController {
         } else {
             User asker = listUser[0];
             User receiver = listUser[1];
-            FriendRequest fr = frService.declineFriendRequest(asker.getPseudo(), receiver.getPseudo());
-            return new Gson().toJson(fr);
+            frService.deleteOne(asker.getPseudo(), receiver.getPseudo());
+            return "{\"result\":\"true\"}";
         }
     }
 
