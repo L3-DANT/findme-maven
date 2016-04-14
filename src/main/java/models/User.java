@@ -56,12 +56,16 @@ public class User implements Serializable {
         return friendList;
     }
 
-    public void addFriend(User u){
-        friendList.add(u);
+    public void addFriend(User pseudo){
+        friendList.add(pseudo);
     }
 
-    public void removeFriend(String pseudo){
-       friendList.remove(new User(pseudo,null));
+    public void removeFriend(User pseudo){
+       friendList.remove(pseudo);
+    }
+
+    public void clearFriendList(){
+        friendList = null;
     }
 
 	@Override

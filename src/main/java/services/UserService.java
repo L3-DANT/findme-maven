@@ -13,7 +13,6 @@ import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
-@Named
 @Stateless
 public class UserService {
     @Inject
@@ -35,5 +34,33 @@ public class UserService {
             dao.insertOne(user);
         }
         return dao.findAll();
+    }
+
+    public void updateUser(User user) {
+        dao.replaceOne(user);
+    }
+
+    public void addFriend(User user1, User user2){
+        user1.setPassword(null);
+        user1.clearFriendList();
+        user2.setPassword(null);
+        user2.clearFriendList();
+
+        User userDB1 = dao.findOneByPseudo(user1.getPseudo());
+        userDB1.addFriend(user2);
+        dao.replaceOne(userDB1);
+
+        User userDB2 = dao.findOneByPseudo(user2.getPseudo());
+        userDB2.addFriend(user1);
+        dao.replaceOne(userDB2);
+    }
+
+    public User getUser(User user) {
+        for (User friend : user.getFriendList()) {
+            User tmp = dao.findOneByPseudo(friend.getPseudo());
+            friend.setX(tmp.getX());
+            friend.setY(tmp.getY());
+        }
+        return user;
     }
 }

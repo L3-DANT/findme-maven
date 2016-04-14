@@ -8,13 +8,12 @@ import com.mongodb.client.model.IndexOptions;
 import connections.MongoConnection;
 import models.User;
 import org.bson.Document;
+import static com.mongodb.client.model.Filters.*;
 
 import javax.ejb.Stateless;
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 
-@Named
 @Stateless
 public class UserDAO {
 
@@ -38,6 +37,12 @@ public class UserDAO {
         return list;
     }
 
+    public User findOneByPseudo(String pseudo){
+        Document doc = coll.find(eq("pseudo",pseudo)).first();
+        User user = new Gson().fromJson(doc.toJson(),User.class);
+        return user;
+    }
+
     public void insertOne(User user){
         Document doc = new Document(Document.parse(new Gson().toJson(user)));
         try{
@@ -48,12 +53,9 @@ public class UserDAO {
         }
     }
 
-    public void replaceOne(User formerUser, User newUser){
-        if(!formerUser.equals(newUser)){
-            throw new MongoException("Provided users don't match.");
-        }
-        Document formerDoc = new Document("pseudo",formerUser.getPseudo());
-        Document newDoc =  new Document(Document.parse(new Gson().toJson(newUser)));
+    public void replaceOne(User user){
+        Document formerDoc = new Document("pseudo",user.getPseudo());
+        Document newDoc =  new Document(Document.parse(new Gson().toJson(user)));
         coll.replaceOne(formerDoc,newDoc);
     }
 
