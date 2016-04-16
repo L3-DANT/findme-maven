@@ -1,6 +1,7 @@
 package services;
 
 import daos.UserDAO;
+import exceptions.NotFoundException;
 import models.User;
 
 import javax.ejb.Stateless;
@@ -13,11 +14,18 @@ import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service class that manages {@link User}
+ */
 @Stateless
 public class UserService {
     @Inject
     private UserDAO dao;
 
+    /**
+     * Finds all users
+     * @return List of every {@link User}
+     */
     public List<User> findAll() {
         return dao.findAll();
     }
@@ -36,26 +44,54 @@ public class UserService {
         return dao.findAll();
     }
 
+    /**
+     * Updates an user
+     * @param user the user to update
+     */
     public void updateUser(User user) {
         dao.replaceOne(user);
     }
 
-    public void addFriend(User user1, User user2){
+    /**
+     * Adds a friend, which means adding a {@link User} with no {@link User#password} and no {@link User#friendList} in one's {@link User#friendList}
+     * @param pseudo1
+     * @param pseudo2
+     * @throws NotFoundException if one of the Users can't be found
+     */
+    public void addFriend(String pseudo1, String pseudo2) throws NotFoundException{
+        // Getting users from DB, clearing password and friendList
+        User user1 = dao.findOneByPseudo(pseudo1);
+        User user2 = dao.findOneByPseudo(pseudo2);
+
+        // Clearing passwords
         user1.setPassword(null);
-        user1.clearFriendList();
         user2.setPassword(null);
+
+        // Clearing friendList
+        user1.clearFriendList();
         user2.clearFriendList();
 
-        User userDB1 = dao.findOneByPseudo(user1.getPseudo());
-        userDB1.addFriend(user2);
-        dao.replaceOne(userDB1);
+        // Getting users from DB
+        User userDB1 = dao.findOneByPseudo(pseudo1);
+        User userDB2 = dao.findOneByPseudo(pseudo2);
 
-        User userDB2 = dao.findOneByPseudo(user2.getPseudo());
-        userDB2.addFriend(user1);
+        // Adding friends in both friendLists
+        userDB1.addFriend(user1);
+        userDB2.addFriend(user2);
+
+        // Replacing in DB
+        dao.replaceOne(userDB1);
         dao.replaceOne(userDB2);
     }
 
-    public User getUser(User user) {
+    /**
+     * Gets a {@link User} and updates its {@link User#friendList}
+     * @param pseudo the {@link User#pseudo}
+     * @return the {@link User}
+     * @throws NotFoundException if the User can't be found
+     */
+    public User getUser(String pseudo) throws NotFoundException{
+        User user = dao.findOneByPseudo(pseudo);
         for (User friend : user.getFriendList()) {
             User tmp = dao.findOneByPseudo(friend.getPseudo());
             friend.setX(tmp.getX());

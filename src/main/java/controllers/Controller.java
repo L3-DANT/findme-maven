@@ -3,8 +3,11 @@ package controllers;
 import com.pusher.rest.Pusher;
 import connections.PusherConnection;
 
+/**
+ * Abstract class used to factor uses of {@link Pusher}
+ */
 public abstract class Controller {
 
-    protected static final Pusher pusher = PusherConnection.getPusher();
+    protected Pusher pusher = PusherConnection.getPusher();
 
 }

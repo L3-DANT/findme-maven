@@ -2,6 +2,9 @@ package connections;
 
 import com.pusher.rest.Pusher;
 
+/**
+ * Singleton giving access to Pusher
+ */
 public class PusherConnection {
 
     public static Pusher getPusher(){

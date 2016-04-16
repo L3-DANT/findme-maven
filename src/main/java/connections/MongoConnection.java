@@ -4,6 +4,9 @@ package connections;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
+/**
+ * Singleton giving an access to a Mongo database
+ */
 public class MongoConnection {
 
     public static MongoDatabase getDb(){
