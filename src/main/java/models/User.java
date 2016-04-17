@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * User entity
+ */
 public class User implements Serializable {
 
     private String pseudo,password;

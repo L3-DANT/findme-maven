@@ -1,5 +1,8 @@
 package models;
 
+/**
+ * FriendRequest entity
+ */
 public class FriendRequest {
     private String asker;
     private String receiver;

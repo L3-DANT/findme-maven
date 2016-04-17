@@ -1,9 +1,6 @@
 package controllers;
 
-
-import com.google.gson.Gson;
-import com.mongodb.util.JSONParseException;
-import exceptions.JSONException;
+import exceptions.NotFoundException;
 import models.FriendRequest;
 import models.User;
 import services.FriendRequestService;
@@ -13,6 +10,11 @@ import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 
+import static utils.Utils.gson;
+
+/**
+ *  Controller that manages {@link FriendRequest}
+ */
 @RequestScoped
 @Path("/friendrequest")
 @Produces("application/json")
@@ -24,50 +26,67 @@ public class FriendRequestController extends Controller{
     @Inject
     private UserService userService;
 
-    @Path("/v1/createfriendrequest")
+
+    /**
+     * Creates a {@link FriendRequest} related to two users
+     * @param fr the parsed json
+     * @return true if the user's created, or false if it already exists
+     */
+    @Path("/v1/create")
     @PUT
     @Consumes("application/json")
-    public String insertFriendRequest(User... listUser) throws JSONException {
-        if(listUser.length != 2) {
-            throw new JSONException("Must provide exactly 2 users");
-        } else {
-            User asker = listUser[0];
-            User receiver = listUser[1];
-            FriendRequest fr = new FriendRequest();
-            fr.setAsker(asker.getPseudo());
-            fr.setReceiver(receiver.getPseudo());
-            frService.insertFriendRequest(fr);
-            return new Gson().toJson(fr);
+    public String createFriendRequest(FriendRequest fr) {
+        return Boolean.toString(frService.insertFriendRequest(fr));
+
+    }
+
+    /**
+     * Accepts a {@link FriendRequest}, which means removing it from database and
+     * adding the first {@link User} in the second's {@link User#friendList} and reversely
+     * @param fr the parsed json
+     * @return true if everything went ok, false if at least one of the users were not found
+     */
+    @Path("/v1/accept")
+    @PUT
+    @Consumes("application/json")
+    public String acceptFriendRequest(FriendRequest fr) {
+        try {
+            userService.addFriend(fr.getAsker(), fr.getReceiver());
+        } catch (NotFoundException e) {
+            return "false";
+        }
+        frService.deleteOne(fr);
+        return "true";
+    }
+
+    /**
+     * Declines a {@link FriendRequest}, which means removing it from database
+     * @param fr the parsed json
+     */
+    @Path("/v1/decline")
+    @DELETE
+    public void declineFriendRequest(FriendRequest fr) {
+            frService.deleteOne(fr);
+    }
+
+
+    /**
+     * Gets a {@link FriendRequest}
+     * @param pseudo1 the user that asked or received the {@link FriendRequest}
+     * @param pseudo2 the user that asked or received the {@link FriendRequest}
+     * @return the {@link FriendRequest} or false if not found
+     */
+    @Path("/v1/get")
+    @GET
+    public String getFriendRequest(@QueryParam("pseudo1") String pseudo1,
+                                   @QueryParam("pseudo2") String pseudo2) {
+        try{
+            FriendRequest fr = frService.getFriendRequestByPseudos(pseudo1,pseudo2);
+            return gson.toJson(fr);
+        }catch (NotFoundException e){
+            return "false";
         }
     }
 
-    @Path("/v1/acceptfriendrequest")
-    @POST
-    @Consumes("application/json")
-    public String acceptFriendRequest(User... listUser) throws JSONException {
-        if(listUser.length != 2) {
-            throw new JSONException("Must provide exactly 2 users");
-        } else {
-            User asker = listUser[0];
-            User receiver = listUser[1];
-            frService.deleteOne(asker.getPseudo(), receiver.getPseudo());
-            userService.addFriend(asker, receiver);
-            return "{\"result\":\"true\"}";
-        }
-    }
-
-    @Path("/v1/declinefriendrequest")
-    @POST
-    @Consumes("application/json")
-    public String declineFriendRequest(User... listUser) throws JSONException {
-        if(listUser.length != 2) {
-            throw new JSONException("Must provide exactly 2 users");
-        } else {
-            User asker = listUser[0];
-            User receiver = listUser[1];
-            frService.deleteOne(asker.getPseudo(), receiver.getPseudo());
-            return "{\"result\":\"true\"}";
-        }
-    }
 
 }
