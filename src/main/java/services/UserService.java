@@ -99,4 +99,17 @@ public class UserService {
         }
         return user;
     }
+
+    public User addUser(String pseudo, String password) {
+        if(pseudo != null && password != null && dao.checkAvaibility(pseudo)){
+            User user = new User(pseudo, password);
+            if(dao.insertOne(user))
+                return user;
+            else
+                return null;
+        }
+        else {
+            return null;
+        }
+    }
 }

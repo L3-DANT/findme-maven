@@ -74,4 +74,31 @@ public class UserController extends Controller{
             return "false";
         }
     }
+
+    /**
+     *  Connect the user to the application
+     *  @param pseudo the pseudo that identifies the {@Link User}
+     *  @param password the password of the {@Link User}
+     *  @return the {@Link User} if tseudo & password is correct or null if they're not
+     */
+    @Path("v1/signIn")
+    @POST
+    public String signIn(@QueryParam("pseudo") String pseudo, @QueryParam("password") String password){
+        try {
+            User user = userService.getUser(pseudo);
+            if(user.checkPassword(password)) {
+                return gson.toJson(user);
+            }
+            else
+                return null;
+        } catch (NotFoundException e) {
+            return null;
+        }
+    }
+
+    @Path("v1/signUp")
+    @POST
+    public String signUp(@QueryParam("pseudo") String pseudo, @QueryParam("password") String password){
+        return userService.addUser(pseudo,password);
+    }
 }

@@ -89,4 +89,12 @@ public class UserDAO extends DAO{
     }
 
 
+    public boolean checkAvaibility(String pseudo) {
+
+        if(coll.find(eq("pseudo",pseudo)).first() == null){
+            return true;
+        }else {
+            return false;
+        }
+    }
 }
