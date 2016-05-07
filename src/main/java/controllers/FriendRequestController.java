@@ -1,5 +1,6 @@
 package controllers;
 
+import com.mongodb.MongoException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import models.User;
@@ -9,6 +10,8 @@ import services.UserService;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+
+import java.util.List;
 
 import static utils.Utils.gson;
 
@@ -36,7 +39,11 @@ public class FriendRequestController extends Controller{
     @PUT
     @Consumes("application/json")
     public String createFriendRequest(FriendRequest fr) {
-        return Boolean.toString(frService.insertFriendRequest(fr));
+        try {
+            return jsonResponse(0, "success", null);
+        } catch(MongoException e){
+            return jsonResponse(-1,"friendRequest is already in database",null);
+        }
 
     }
 
@@ -51,12 +58,12 @@ public class FriendRequestController extends Controller{
     @Consumes("application/json")
     public String acceptFriendRequest(FriendRequest fr) {
         try {
-            userService.addFriend(fr.getAsker(), fr.getReceiver());
+            userService.addFriend(fr.getCaller(), fr.getReceiver());
+            frService.deleteOne(fr);
+            return jsonResponse(0,"success",null);
         } catch (NotFoundException e) {
-            return "false";
+            return jsonResponse(-1,"friendRequest not found",null);
         }
-        frService.deleteOne(fr);
-        return "true";
     }
 
     /**
@@ -65,8 +72,13 @@ public class FriendRequestController extends Controller{
      */
     @Path("/v1/decline")
     @DELETE
-    public void declineFriendRequest(FriendRequest fr) {
+    public String declineFriendRequest(FriendRequest fr) {
+        try {
             frService.deleteOne(fr);
+            return jsonResponse(0, "success", null);
+        } catch (NotFoundException e) {
+            return jsonResponse(-1, "friendRequest not found", null);
+        }
     }
 
 
@@ -82,11 +94,50 @@ public class FriendRequestController extends Controller{
                                    @QueryParam("pseudo2") String pseudo2) {
         try{
             FriendRequest fr = frService.getFriendRequestByPseudos(pseudo1,pseudo2);
-            return gson.toJson(fr);
+            return jsonResponse(0, "success",gson.toJson(fr));
         }catch (NotFoundException e){
-            return "false";
+            return jsonResponse(-1,"friendRequest not found",null);
         }
     }
 
+    @Path("/v1/callers")
+    @GET
+    public String getCaller(@QueryParam("pseudo") String pseudo) {
+        try {
+            List<FriendRequest> list = frService.findByReceiver(pseudo);
+            String data = "[";
+            int i = 0;
+            for(FriendRequest fr : list){
+                if(++i == list.size())
+                    data += "\""+fr.getCaller()+"\"";
+                else
+                    data += "\""+fr.getCaller()+"\",";
+            }
+            data += "]";
+            return jsonResponse(0,"success",data);
+        } catch (NotFoundException e) {
+            return jsonResponse(-1,"no caller found",null);
+        }
+    }
+
+    @Path("/v1/receivers")
+    @GET
+    public String getReceivers(@QueryParam("pseudo") String pseudo) {
+        try {
+            List<FriendRequest> list = frService.findByCaller(pseudo);
+            String data = "[";
+            int i = 0;
+            for(FriendRequest fr : list){
+                if(++i == list.size())
+                    data += "\""+fr.getReceiver()+"\"";
+                else
+                    data += "\""+fr.getReceiver()+"\",";
+            }
+            data += "]";
+            return jsonResponse(0,"success",data);
+        } catch (NotFoundException e) {
+            return jsonResponse(-1,"no receiver found",null);
+        }
+    }
 
 }

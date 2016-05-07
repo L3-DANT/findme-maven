@@ -1,5 +1,7 @@
 package models;
 
+import com.google.gson.annotations.Expose;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,9 +11,11 @@ import java.util.List;
  */
 public class User implements Serializable {
 
-    private String pseudo,password;
-    private float x,y;
+    private String pseudo;
+    private transient String password;
+    private float latitude,longitude;
     private List<User> friendList;
+    private String phoneNumber;
 
     public User(){
         this(null, null,0,0);
@@ -21,12 +25,13 @@ public class User implements Serializable {
         this(pseudo,password,0,0);
     }
 
-    public User(String pseudo, String password,float x, float y){
+    public User(String pseudo, String password,float latitude, float longitude){
         this.pseudo = pseudo;
         this.password = password;
-        this.x = x;
-        this.y = y;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.friendList = new ArrayList<User>();
+        this.phoneNumber = "0000000000";
     }
 
     public String getPseudo() {
@@ -39,21 +44,10 @@ public class User implements Serializable {
 
     public void setPassword(String password) { this.password = password; }
 
-    public float getX() {
-        return x;
+    public String getPassword(){
+        return this.password;
     }
 
-    public void setX(float x) {
-        this.x = x;
-    }
-
-    public float getY() {
-        return y;
-    }
-
-    public void setY(float y) {
-        this.y = y;
-    }
 
     public List<User> getFriendList(){
         return friendList;
@@ -82,4 +76,27 @@ public class User implements Serializable {
 	}
 
 
+    public float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(float latitude) {
+        this.latitude = latitude;
+    }
+
+    public float getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(float longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 }

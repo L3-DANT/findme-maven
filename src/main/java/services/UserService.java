@@ -1,5 +1,6 @@
 package services;
 
+import com.mongodb.MongoException;
 import daos.UserDAO;
 import exceptions.NotFoundException;
 import models.User;
@@ -32,23 +33,27 @@ public class UserService {
 
     public List<User> insertTest(){
         List<User> list = new ArrayList<User>();
-        list.add(new User("Antoine","123", 124f,127f));
-        list.add(new User("François","123", 42f,42f));
-        list.add(new User("Maxime","123", 147f,25845f));
-        list.add(new User("Nicolas","123", 7984f,98f));
-        list.add(new User("Adrien","123", 48f,878f));
-        list.add(new User("Olivier","123", 0f,0f));
+        list.add(new User("Antoine","123", 48.84927f,2.35268f));
+        list.add(new User("François","123", 48.84862f,2.36071f));
+        list.add(new User("Maxime","123", 48.84723f,2.35835f));
+        list.add(new User("Nicolas","123", 48.84461f,2.35221f));
+        list.add(new User("Adrien","123", 48.84427f,2.35865f));
+        list.add(new User("Olivier","123", 48.84138f,2.35972f));
         for (User user : list) {
             dao.insertOne(user);
         }
         return dao.findAll();
     }
 
+    public User insertUser(User user) throws MongoException{
+        return dao.insertOne(user);
+    }
+
     /**
      * Updates an user
      * @param user the user to update
      */
-    public void updateUser(User user) {
+    public void updateUser(User user) throws NotFoundException{
         dao.replaceOne(user);
     }
 
@@ -94,9 +99,19 @@ public class UserService {
         User user = dao.findOneByPseudo(pseudo);
         for (User friend : user.getFriendList()) {
             User tmp = dao.findOneByPseudo(friend.getPseudo());
-            friend.setX(tmp.getX());
-            friend.setY(tmp.getY());
+            friend.setLatitude(tmp.getLatitude());
+            friend.setLongitude(tmp.getLongitude());
         }
         return user;
     }
+
+    public boolean connect(String pseudo, String password) throws NotFoundException{
+        User user = dao.findOneByPseudo(pseudo);
+        return password.equals(user.getPassword());
+    }
+
+    public void deleteUser(String pseudo) throws NotFoundException {
+        dao.deleteOne(pseudo);
+    }
+
 }
