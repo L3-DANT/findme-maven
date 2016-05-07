@@ -1,10 +1,8 @@
 package daos;
 
 import com.mongodb.MongoException;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.IndexOptions;
-import connections.MongoConnection;
 import exceptions.NotFoundException;
 import models.User;
 import org.bson.Document;
@@ -67,7 +65,7 @@ public class UserDAO extends DAO {
      * @param user the {@link User} to add
      * @return true if succeded, false if the user already exists
      */
-    public User insertOne(User user) throws MongoException{
+    public User insertOne(User user) throws MongoException {
         Document doc = new Document(Document.parse(gson.toJson(user)));
         coll.insertOne(doc);
         return user;
@@ -77,13 +75,12 @@ public class UserDAO extends DAO {
      * Updates one {@link User} in database
      * @param user the {@link User} to update
      */
-    public User replaceOne(User user) throws NotFoundException{
+    public void replaceOne(User user) throws NotFoundException{
         Document formerDoc = coll.find(eq("pseudo",user.getPseudo())).first();
         if(formerDoc == null)
             throw new NotFoundException("User not found");
         Document newDoc =  new Document(Document.parse(gson.toJson(user)));
         coll.replaceOne(formerDoc,newDoc);
-        return user;
     }
 
     public void deleteOne(String pseudo) throws NotFoundException{

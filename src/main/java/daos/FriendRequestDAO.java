@@ -2,6 +2,7 @@ package daos;
 
 import com.mongodb.MongoException;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.IndexOptions;
 import connections.MongoConnection;
 import exceptions.NotFoundException;
@@ -13,18 +14,20 @@ import static com.mongodb.client.model.Filters.*;
 import static utils.Utils.gson;
 
 import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * DAO class that manages {@link FriendRequest}
- * Note that in most cases, order of {@link FriendRequest#asker} and {@link FriendRequest#receiver} doesn't matter
+ * Note that in most cases, order of {@link FriendRequest#caller} and {@link FriendRequest#receiver} doesn't matter
  */
 @Stateless
 public class FriendRequestDAO extends DAO{
 
     public FriendRequestDAO(){
         super("friendRequest");
-        // Ensures that a FriendRequest can be identified by a pair of asker-receiver
-        coll.createIndex(new Document("asker",1).append("receiver",1),new IndexOptions().unique(true));
+        // Ensures that a FriendRequest can be identified by a pair of caller-receiver
+        coll.createIndex(new Document("caller",1).append("receiver",1),new IndexOptions().unique(true));
     }
 
 
@@ -34,15 +37,10 @@ public class FriendRequestDAO extends DAO{
      * @return false if FriendRequest already exists in database, true otherwise
      * @throws MongoException if the friend request already exists
      */
-    public boolean insertOne(FriendRequest fr) throws MongoException{
+    public FriendRequest insertOne(FriendRequest fr) throws MongoException{
         Document doc = new Document(Document.parse(gson.toJson(fr)));
-        try{
-            coll.insertOne(doc);
-        } catch(MongoException e){
-            System.out.println("FriendRequest already exists in database.");
-            return false;
-        }
-        return true;
+        coll.insertOne(doc);
+        return fr;
     }
 
 
@@ -54,7 +52,7 @@ public class FriendRequestDAO extends DAO{
      * @throws NotFoundException if the {@link FriendRequest} is not found in the database
      */
     public FriendRequest findOneByPseudos(String pseudo1, String pseudo2)  throws NotFoundException{
-        Document doc = coll.find(or(and(eq("asker",pseudo1),eq("receiver",pseudo2)),and(eq("asker",pseudo2),eq("receiver",pseudo1)))).first();
+        Document doc = coll.find(or(and(eq("caller",pseudo1),eq("receiver",pseudo2)),and(eq("caller",pseudo2),eq("receiver",pseudo1)))).first();
         if(doc == null){
             throw new NotFoundException("Friend request not found");
         }
@@ -67,11 +65,29 @@ public class FriendRequestDAO extends DAO{
      * Removes a {@link FriendRequest} from the database
      * @param fr the {@link FriendRequest} to remove
      */
-    public void deleteOne(FriendRequest fr){
-        Document doc = new Document("asker",fr.getAsker()).append("receiver",fr.getReceiver());
-        coll.deleteOne(doc);
-        // Also removes opposite FriendRequest, great for lazy / inattentive developpers
-        doc = new Document("asker",fr.getReceiver()).append("receiver",fr.getAsker());
-        coll.deleteOne(doc);
+    public void deleteOne(FriendRequest fr) throws NotFoundException{
+        int i = 0;
+        Document doc = new Document("caller",fr.getCaller()).append("receiver",fr.getReceiver());
+        i += coll.deleteOne(doc).getDeletedCount();
+        // Also removes opposite FriendRequest, great for lazy / inattentive developers
+        doc = new Document("caller",fr.getReceiver()).append("receiver",fr.getCaller());
+        i += coll.deleteOne(doc).getDeletedCount();
+        if(i < 1)
+            throw new NotFoundException("Friend request not found");
+    }
+
+    public List<FriendRequest> findByField(String pseudo, String field) throws NotFoundException{
+        List<FriendRequest> list = new ArrayList<FriendRequest>();
+        MongoCursor<Document> cursor = coll.find(eq(field,pseudo)).iterator();
+        try {
+            while (cursor.hasNext()) {
+                list.add(gson.fromJson(cursor.next().toJson(),FriendRequest.class));
+            }
+        } finally {
+            cursor.close();
+        }
+        if(list.size() < 1)
+            throw new NotFoundException("Friend requests not found");
+        return list;
     }
 }

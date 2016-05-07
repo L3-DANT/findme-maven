@@ -4,7 +4,7 @@ package models;
  * FriendRequest entity
  */
 public class FriendRequest {
-    private String asker;
+    private String caller;
     private String receiver;
 
 
@@ -12,21 +12,21 @@ public class FriendRequest {
         this(null,null);
     }
 
-    public FriendRequest(String asker, String receiver){
-        this.asker = asker;
+    public FriendRequest(String caller, String receiver){
+        this.caller = caller;
         this.receiver = receiver;
     }
 
-    public String getAsker() {
-        return asker;
+    public String getCaller() {
+        return caller;
     }
 
     public String getReceiver() {
         return receiver;
     }
 
-    public void setAsker(String asker) {
-        this.asker = asker;
+    public void setCaller(String caller) {
+        this.caller = caller;
     }
 
     public void setReceiver(String receiver) {
@@ -34,6 +34,6 @@ public class FriendRequest {
     }
 
     public String toString(){
-        return "asker:"+asker+"/receiver:"+receiver;
+        return "caller:"+caller+"/receiver:"+receiver;
     }
 }

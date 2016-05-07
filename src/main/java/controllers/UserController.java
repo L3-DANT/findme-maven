@@ -53,12 +53,13 @@ public class UserController extends Controller{
      * @param user the {@link User} to update
      * @return the serialized {@link User}
      */
-    @Path("v1/updateuser")
+    @Path("v1/update")
     @POST
     @Consumes("application/json")
     public String updateUser(User user){
         try {
-            return jsonResponse(0,"success",gson.toJson(userService.updateUser(user)));
+            userService.updateUser(user);
+            return jsonResponse(0,"success",null);
         } catch (NotFoundException e) {
             return jsonResponse(-1,"user not found",null);
         }
@@ -111,7 +112,7 @@ public class UserController extends Controller{
         }
     }
 
-    @Path("/v1/decline")
+    @Path("/v1/delete")
     @DELETE
     public String deleteUser(@QueryParam("pseudo") String pseudo) {
         try {
