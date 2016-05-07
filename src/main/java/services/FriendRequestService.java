@@ -6,6 +6,7 @@ import models.FriendRequest;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * Service class that manages {@link FriendRequest}
@@ -22,7 +23,7 @@ public class FriendRequestService {
      * @param fr
      * @return false if FriendRequest already exists
      */
-    public boolean insertFriendRequest(FriendRequest fr) {
+    public FriendRequest insertFriendRequest(FriendRequest fr) {
         return dao.insertOne(fr);
     }
 
@@ -42,8 +43,16 @@ public class FriendRequestService {
      * Deletes the {@link FriendRequest}
      * @param fr
      */
-    public void deleteOne(FriendRequest fr) {
+    public void deleteOne(FriendRequest fr) throws NotFoundException{
         dao.deleteOne(fr);
+    }
+
+    public List<FriendRequest> findByCaller(String pseudo) throws NotFoundException{
+        return dao.findByField("caller",pseudo);
+    }
+
+    public List<FriendRequest> findByReceiver(String pseudo) throws NotFoundException{
+        return dao.findByField("receiver",pseudo);
     }
 
 }

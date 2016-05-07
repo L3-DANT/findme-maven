@@ -53,8 +53,8 @@ public class UserService {
      * Updates an user
      * @param user the user to update
      */
-    public User updateUser(User user) throws NotFoundException{
-        return dao.replaceOne(user);
+    public void updateUser(User user) throws NotFoundException{
+        dao.replaceOne(user);
     }
 
     /**
