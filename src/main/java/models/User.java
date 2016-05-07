@@ -15,6 +15,7 @@ public class User implements Serializable {
     private transient String password;
     private float latitude,longitude;
     private List<User> friendList;
+    private String phoneNumber;
 
     public User(){
         this(null, null,0,0);
@@ -30,6 +31,7 @@ public class User implements Serializable {
         this.latitude = latitude;
         this.longitude = longitude;
         this.friendList = new ArrayList<User>();
+        this.phoneNumber = "0000000000";
     }
 
     public String getPseudo() {
@@ -88,5 +90,13 @@ public class User implements Serializable {
 
     public void setLongitude(float longitude) {
         this.longitude = longitude;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
