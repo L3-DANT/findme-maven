@@ -20,7 +20,7 @@ import static utils.Utils.gson;
  * DAO class that manages {@link User}
  */
 @Stateless
-public class UserDAO extends DAO{
+public class UserDAO extends DAO {
 
     public UserDAO(){
         super("user");
@@ -67,34 +67,28 @@ public class UserDAO extends DAO{
      * @param user the {@link User} to add
      * @return true if succeded, false if the user already exists
      */
-    public boolean insertOne(User user){
+    public User insertOne(User user) throws MongoException{
         Document doc = new Document(Document.parse(gson.toJson(user)));
-        try{
-            coll.insertOne(doc);
-        } catch(MongoException e){
-            System.out.println("User already exists in database.");
-            return false;
-        }
-        return true;
+        coll.insertOne(doc);
+        return user;
     }
 
     /**
      * Updates one {@link User} in database
      * @param user the {@link User} to update
      */
-    public void replaceOne(User user){
-        Document formerDoc = new Document("pseudo",user.getPseudo());
+    public User replaceOne(User user) throws NotFoundException{
+        Document formerDoc = coll.find(eq("pseudo",user.getPseudo())).first();
+        if(formerDoc == null)
+            throw new NotFoundException("User not found");
         Document newDoc =  new Document(Document.parse(gson.toJson(user)));
         coll.replaceOne(formerDoc,newDoc);
+        return user;
     }
 
-
-    public boolean checkAvaibility(String pseudo) {
-
-        if(coll.find(eq("pseudo",pseudo)).first() == null){
-            return true;
-        }else {
-            return false;
-        }
+    public void deleteOne(String pseudo) throws NotFoundException{
+        if(coll.deleteOne(new Document("pseudo", pseudo)).getDeletedCount() < 1)
+            throw new NotFoundException("User not found");
     }
+
 }

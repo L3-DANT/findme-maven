@@ -1,5 +1,6 @@
 package controllers;
 
+import com.mongodb.MongoException;
 import exceptions.NotFoundException;
 import models.User;
 import services.UserService;
@@ -32,8 +33,8 @@ public class UserController extends Controller{
     }
 
     /**
-     * Insert false datas in database (use only for tests)
-     * @return the serialized list of the users
+     * Insert false data in database (use only for tests)
+     * @return a serialized list of the users
      */
     @Path("/fixtures")
     @GET
@@ -56,8 +57,11 @@ public class UserController extends Controller{
     @POST
     @Consumes("application/json")
     public String updateUser(User user){
-        userService.updateUser(user);
-        return gson.toJson(user);
+        try {
+            return jsonResponse(0,"success",gson.toJson(userService.updateUser(user)));
+        } catch (NotFoundException e) {
+            return jsonResponse(-1,"user not found",null);
+        }
     }
 
     /**
@@ -65,13 +69,13 @@ public class UserController extends Controller{
      * @param pseudo the pseudo that identifies the {@link User}
      * @return the {@link User} or false if not found
      */
-    @Path("v1/getUser")
+    @Path("v1/user-by-pseudo")
     @GET
     public String getUser(@QueryParam("pseudo") String pseudo){
         try {
-            return gson.toJson(userService.getUser(pseudo));
+            return jsonResponse(0,"success",gson.toJson(userService.getUser(pseudo)));
         } catch (NotFoundException e) {
-            return "false";
+            return jsonResponse(0,"user not found",null);
         }
     }
 
@@ -81,24 +85,41 @@ public class UserController extends Controller{
      *  @param password the password of the {@Link User}
      *  @return the {@Link User} if tseudo & password is correct or null if they're not
      */
-    @Path("v1/signIn")
+    @Path("v1/login")
     @POST
-    public String signIn(@QueryParam("pseudo") String pseudo, @QueryParam("password") String password){
+    public String login(@QueryParam("pseudo") String pseudo, @QueryParam("password") String password){
         try {
-            User user = userService.getUser(pseudo);
-            if(user.checkPassword(password)) {
-                return gson.toJson(user);
+            if(userService.connect(pseudo,password)){
+                return jsonResponse(0,"succes",gson.toJson(userService.getUser(pseudo)));
+            } else {
+                return jsonResponse(-1,"provided pseudo and password don't match",null);
             }
-            else
-                return null;
         } catch (NotFoundException e) {
-            return null;
+            return jsonResponse(-2,"user not found",null);
         }
     }
 
-    @Path("v1/signUp")
-    @POST
-    public String signUp(@QueryParam("pseudo") String pseudo, @QueryParam("password") String password){
-        return userService.addUser(pseudo,password);
+    @Path("v1/sign-up")
+    @PUT
+    @Consumes("application/json")
+    public String signUp(User user){
+        try {
+            userService.insertUser(user);
+            return jsonResponse(0,"succes",gson.toJson(user));
+        } catch (MongoException e){
+            return jsonResponse(-1,"user already exists in database",gson.toJson(user));
+        }
     }
+
+    @Path("/v1/decline")
+    @DELETE
+    public String deleteUser(@QueryParam("pseudo") String pseudo) {
+        try {
+            userService.deleteUser(pseudo);
+            return jsonResponse(0,"succes",null);
+        } catch (NotFoundException e) {
+            return jsonResponse(-1,"User not found",null);
+        }
+    }
+
 }
