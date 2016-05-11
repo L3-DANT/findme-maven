@@ -49,7 +49,7 @@ public class UserController extends Controller{
     }
 
     /**
-     * Updates given {@link User} in database
+     * Updates given {@link User} in database and notify it on the pusher channel
      * @param user the {@link User} to update
      * @return the serialized {@link User}
      */
@@ -59,6 +59,7 @@ public class UserController extends Controller{
     public String updateUser(User user){
         try {
             userService.updateUser(user);
+            pusher.trigger(user.getPseudo(),"updateUser",gson.toJson(user));
             return jsonResponse(0,"success",null);
         } catch (NotFoundException e) {
             return jsonResponse(-1,"user not found",null);
