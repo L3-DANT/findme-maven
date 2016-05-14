@@ -4,14 +4,20 @@
 	<title></title>
 </head>
 <body>
+<div id="form">
 	<br/>
-	http://localhost:8080/findme/api/ <input type="text" id="controller" placeholder="controller" value="friendrequest"></input> / <input type="text" id="url" placeholder="url" value="v1/createfriendrequest"></input>
+	http://localhost:8080/findme/api/ <input type="text" id="path" placeholder="path" value="user" /> /
+    <input type="text" id="version" placeholder="path" value="v1" />
 	<br/>
-	<input type="text" id="type" placeholder="request type" value="PUT"></input>
+	<input type= "radio" name="method" value="GET" checked> GET
+	<input type= "radio" name="method" value="PUT"> PUT
+	<input type= "radio" name="method" value="POST"> POST
+	<input type= "radio" name="method" value="DELETE"> DELETE
 	<br/>
-	<textarea id="data">[]</textarea>
+	<textarea id="data" rows="8" cols="100"></textarea>
 	<br/>
 	<button id="submit">Valider</button>
+</div>
 	<br/><br/><br/>
 	<div id="result" align="center" style="width:60%;margin:auto">
 	</div>
@@ -22,28 +28,21 @@ e=n.propHooks[b]),void 0!==c?e&&"set"in e&&void 0!==(d=e.set(a,c,b))?d:a[b]=c:e&
 
 	</script>
 	<script>
-	$('#submit').on('click',function(){
-
-		var demande = {
-			caller: "coucou",
-			receiver: "cici"
-		};
-
-		$.ajax({
-			headers: {
-//				'Accept': 'application/json',
-				'Content-Type': 'application/json'
-            },
-       		url : 'http://localhost:8080/findme/api/'+ $('#controller').val() +'/'+ $('#url').val(),
-       		type : $('#type').val(),
-       		dataType : 'json',
-       		data: $('#data').val(),
-			contentType: 'application/json',
-       		success : function(code_html) {
-				$('#result').html((JSON.stringify(code_html)));
-       		}
-		});
-	});
+        $('#submit').on('click',function(){
+            $.ajax({
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                url : 'http://localhost:8080/findme/api/'+ $('#path').val() + '/' + $('#version').val(),
+                type : $('input[name=method]:checked','#form').val(),
+                dataType : 'json',
+                data: $('#data').val(),
+                contentType: 'application/json',
+                success : function(code_html) {
+                    $('#result').html((JSON.stringify(code_html)));
+                }
+            });
+        });
     </script>
 
 </body>
