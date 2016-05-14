@@ -97,7 +97,7 @@ public class UserService {
      * @return the {@link User}
      * @throws NotFoundException if the User can't be found
      */
-    public User getUser(String pseudo) throws NotFoundException{
+        public User getUser(String pseudo) throws NotFoundException{
         User user = dao.findOneByPseudo(pseudo);
         for (User friend : user.getFriendList()) {
             User tmp = dao.findOneByPseudo(friend.getPseudo());
