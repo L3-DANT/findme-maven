@@ -1,7 +1,9 @@
 package controllers;
 
 import com.mongodb.MongoException;
+import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
+import models.Login;
 import models.User;
 import services.UserService;
 
@@ -83,16 +85,16 @@ public class UserController extends Controller{
 
     /**
      *  Connect the user to the application
-     *  @param pseudo the pseudo that identifies the {@Link User}
-     *  @param password the password of the {@Link User}
+     *  @param login the pseudo that identifies the {@Link User}
      *  @return the {@Link User} if tseudo & password is correct or null if they're not
      */
     @Path("v1/login")
     @POST
-    public String login(@QueryParam("pseudo") String pseudo, @QueryParam("password") String password){
+    @Consumes("application/json")
+    public String login(Login login){
         try {
-            if(userService.connect(pseudo,password)){
-                return jsonResponse(0,"succes",gson.toJson(userService.getUser(pseudo)));
+            if(userService.connect(login.getPseudo(),login.getPassword())){
+                return jsonResponse(0,"succes",gson.toJson(userService.getUser(login.getPseudo())));
             } else {
                 return jsonResponse(-1,"provided pseudo and password don't match",null);
             }
@@ -108,7 +110,7 @@ public class UserController extends Controller{
         try {
             userService.insertUser(user);
             return jsonResponse(0,"succes",gson.toJson(user));
-        } catch (MongoException e){
+        } catch (DuplicateDataException e){
             return jsonResponse(-1,"user already exists in database",gson.toJson(user));
         }
     }

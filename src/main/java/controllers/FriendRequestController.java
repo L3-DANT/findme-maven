@@ -1,6 +1,7 @@
 package controllers;
 
 import com.mongodb.MongoException;
+import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import models.User;
@@ -40,8 +41,9 @@ public class FriendRequestController extends Controller{
     @Consumes("application/json")
     public String createFriendRequest(FriendRequest fr) {
         try {
+            frService.insertFriendRequest(fr);
             return jsonResponse(0, "success", null);
-        } catch(MongoException e){
+        } catch(DuplicateDataException e){
             return jsonResponse(-1,"friendRequest is already in database",null);
         }
 

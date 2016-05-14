@@ -5,6 +5,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.IndexOptions;
 import connections.MongoConnection;
+import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import org.bson.Document;
@@ -26,8 +27,6 @@ public class FriendRequestDAO extends DAO{
 
     public FriendRequestDAO(){
         super("friendRequest");
-        // Ensures that a FriendRequest can be identified by a pair of caller-receiver
-        coll.createIndex(new Document("caller",1).append("receiver",1),new IndexOptions().unique(true));
     }
 
 
@@ -37,9 +36,15 @@ public class FriendRequestDAO extends DAO{
      * @return false if FriendRequest already exists in database, true otherwise
      * @throws MongoException if the friend request already exists
      */
-    public FriendRequest insertOne(FriendRequest fr) throws MongoException{
-        Document doc = new Document(Document.parse(gson.toJson(fr)));
-        coll.insertOne(doc);
+    public FriendRequest insertOne(FriendRequest fr) throws DuplicateDataException{
+
+        try{
+            findOneByPseudos(fr.getCaller(),fr.getReceiver());
+            throw new DuplicateDataException("FriendRequest already exists in database");
+        } catch (NotFoundException e){
+            Document doc = new Document(Document.parse(gson.toJson(fr)));
+            coll.insertOne(doc);
+        }
         return fr;
     }
 

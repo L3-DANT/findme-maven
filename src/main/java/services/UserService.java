@@ -1,7 +1,9 @@
 package services;
 
 import com.mongodb.MongoException;
+import com.mongodb.MongoWriteException;
 import daos.UserDAO;
+import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.User;
 
@@ -40,12 +42,12 @@ public class UserService {
         list.add(new User("Adrien","123", 48.84427f,2.35865f));
         list.add(new User("Olivier","123", 48.84138f,2.35972f));
         for (User user : list) {
-            dao.insertOne(user);
+//            dao.insertOne(user);
         }
         return dao.findAll();
     }
 
-    public User insertUser(User user) throws MongoException{
+    public User insertUser(User user) throws DuplicateDataException {
         return dao.insertOne(user);
     }
 
