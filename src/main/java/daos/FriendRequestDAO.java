@@ -81,7 +81,7 @@ public class FriendRequestDAO extends DAO{
             throw new NotFoundException("Friend request not found");
     }
 
-    public List<FriendRequest> findByField(String pseudo, String field) throws NotFoundException{
+    public List<FriendRequest> findByField(String pseudo, String field){
         List<FriendRequest> list = new ArrayList<FriendRequest>();
         MongoCursor<Document> cursor = coll.find(eq(field,pseudo)).iterator();
         try {
@@ -91,8 +91,6 @@ public class FriendRequestDAO extends DAO{
         } finally {
             cursor.close();
         }
-        if(list.size() < 1)
-            throw new NotFoundException("Friend requests not found");
         return list;
     }
 }

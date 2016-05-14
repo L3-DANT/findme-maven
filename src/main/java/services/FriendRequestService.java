@@ -48,12 +48,33 @@ public class FriendRequestService {
         dao.deleteOne(fr);
     }
 
-    public List<FriendRequest> findByCaller(String pseudo) throws NotFoundException{
-        return dao.findByField("caller",pseudo);
+    public String findByCaller(String pseudo) {
+        return serializeList(dao.findByField("caller",pseudo),0);
     }
 
-    public List<FriendRequest> findByReceiver(String pseudo) throws NotFoundException{
-        return dao.findByField("receiver",pseudo);
+    public String findByReceiver(String pseudo) {
+        return serializeList(dao.findByField("receiver",pseudo),1);
+    }
+
+    private String serializeList(List<FriendRequest> list, int from) {
+        String data = "";
+        int i = 0;
+        if(from == 0){
+            for(FriendRequest fr : list){
+                if(++i == list.size())
+                    data += "\""+fr.getReceiver()+"\"";
+                else
+                    data += "\""+fr.getReceiver()+"\",";
+            }
+        } else {
+            for(FriendRequest fr : list){
+                if(++i == list.size())
+                    data += "\""+fr.getCaller()+"\"";
+                else
+                    data += "\""+fr.getCaller()+"\",";
+            }
+        }
+        return "["+data+"]";
     }
 
 }
