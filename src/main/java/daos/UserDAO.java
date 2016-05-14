@@ -1,8 +1,11 @@
 package daos;
 
+import com.mongodb.Mongo;
 import com.mongodb.MongoException;
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.IndexOptions;
+import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.User;
 import org.bson.Document;
@@ -56,6 +59,7 @@ public class UserDAO extends DAO {
         if(doc == null)
             throw new NotFoundException("User not found");
         User user = gson.fromJson(doc.toJson(),User.class);
+        user.setPassword(doc.get("password").toString());
         return user;
     }
 
@@ -65,9 +69,13 @@ public class UserDAO extends DAO {
      * @param user the {@link User} to add
      * @return true if succeded, false if the user already exists
      */
-    public User insertOne(User user) throws MongoException {
+    public User insertOne(User user) throws DuplicateDataException {
         Document doc = new Document(Document.parse(gson.toJson(user)));
-        coll.insertOne(doc);
+        try{
+            coll.insertOne(doc);
+        } catch (Exception e){
+            throw new DuplicateDataException("User already exists in database");
+        }
         return user;
     }
 

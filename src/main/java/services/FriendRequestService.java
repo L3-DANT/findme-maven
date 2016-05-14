@@ -1,6 +1,7 @@
 package services;
 
 import daos.FriendRequestDAO;
+import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 
@@ -23,7 +24,7 @@ public class FriendRequestService {
      * @param fr
      * @return false if FriendRequest already exists
      */
-    public FriendRequest insertFriendRequest(FriendRequest fr) {
+    public FriendRequest insertFriendRequest(FriendRequest fr) throws DuplicateDataException {
         return dao.insertOne(fr);
     }
 
