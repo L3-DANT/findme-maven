@@ -34,6 +34,7 @@ public class UserService {
     }
 
     public List<User> insertTest(){
+        dao.clearCollection();
         List<User> list = new ArrayList<User>();
         list.add(new User("Antoine","123", 48.84927f,2.35268f));
         list.add(new User("François","123", 48.84862f,2.36071f));
@@ -42,7 +43,11 @@ public class UserService {
         list.add(new User("Adrien","123", 48.84427f,2.35865f));
         list.add(new User("Olivier","123", 48.84138f,2.35972f));
         for (User user : list) {
-//            dao.insertOne(user);
+            try {
+                dao.insertOne(user);
+            } catch (DuplicateDataException e) {
+                continue;
+            }
         }
         return dao.findAll();
     }
