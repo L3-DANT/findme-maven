@@ -99,15 +99,6 @@ public class UserController extends Controller{
     }
 
 
-    /**
-     * Gets every {@link User} in the database
-     * @return the serialized list of users
-     */
-    @Path("/v1/users")
-    @GET
-    public String findAll(){
-        return gson.toJson(userService.findAll());
-    }
 
     /**
      * Insert false data in database (use only for tests)

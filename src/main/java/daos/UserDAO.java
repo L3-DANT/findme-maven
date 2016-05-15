@@ -47,6 +47,10 @@ public class UserDAO extends DAO {
         return list;
     }
 
+    public void clearCollection(){
+        coll.drop();
+    }
+
 
     /**
      * Finds one {@link User} in database
@@ -73,7 +77,7 @@ public class UserDAO extends DAO {
         Document doc = new Document(Document.parse(gson.toJson(user)));
         try{
             coll.insertOne(doc);
-        } catch (Exception e){
+        } catch (MongoWriteException e){
             throw new DuplicateDataException("User already exists in database");
         }
         return user;
