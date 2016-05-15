@@ -1,8 +1,11 @@
 package models;
 
 
+import com.google.gson.annotations.Expose;
+
 public class Login {
 
+    @Expose
     private String pseudo,password;
 
 

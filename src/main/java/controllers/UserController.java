@@ -11,8 +11,6 @@ import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
-import static utils.Utils.gson;
-
 /**
  * Controller that manages {@link User}
  */

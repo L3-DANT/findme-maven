@@ -1,11 +1,14 @@
 package models;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * FriendRequest entity
  */
 public class FriendRequest {
-    private String caller;
-    private String receiver;
+
+    @Expose
+    private String caller,receiver;
 
 
     public FriendRequest(){

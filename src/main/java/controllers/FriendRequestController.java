@@ -15,8 +15,6 @@ import javax.ws.rs.core.Response;
 
 import java.util.List;
 
-import static utils.Utils.gson;
-
 /**
  *  Controller that manages {@link FriendRequest}
  */
