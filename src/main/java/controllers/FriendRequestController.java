@@ -106,4 +106,15 @@ public class FriendRequestController extends Controller{
     }
 
 
+    /**
+     * Insert false data in database (use only for tests)
+     * @return a serialized list of the users
+     */
+    @Path("/fixtures")
+    @GET
+    public String insertTest(){
+        return gson.toJson(userService.insertTest());
+    }
+
+
 }
