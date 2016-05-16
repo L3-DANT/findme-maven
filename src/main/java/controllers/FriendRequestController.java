@@ -15,8 +15,6 @@ import javax.ws.rs.core.Response;
 
 import java.util.List;
 
-import static utils.Utils.gson;
-
 /**
  *  Controller that manages {@link FriendRequest}
  */
@@ -105,6 +103,17 @@ public class FriendRequestController extends Controller{
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
+    }
+
+
+    /**
+     * Insert false data in database (use only for tests)
+     * @return a serialized list of the users
+     */
+    @Path("/fixtures")
+    @GET
+    public String insertTest(){
+        return gson.toJson(userService.insertTest());
     }
 
 

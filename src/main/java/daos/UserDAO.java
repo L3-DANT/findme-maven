@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
-import static utils.Utils.gson;
 
 /**
  * DAO class that manages {@link User}
@@ -39,7 +38,9 @@ public class UserDAO extends DAO {
         MongoCursor<Document> cursor = coll.find().iterator();
         try {
             while (cursor.hasNext()) {
-                list.add(gson.fromJson(cursor.next().toJson(),User.class));
+                String s = cursor.next().toJson();
+                System.out.println(s);
+                list.add(gson.fromJson(s,User.class));
             }
         } finally {
             cursor.close();
@@ -63,7 +64,6 @@ public class UserDAO extends DAO {
         if(doc == null)
             throw new NotFoundException("User not found");
         User user = gson.fromJson(doc.toJson(),User.class);
-        user.setPassword(doc.get("password").toString());
         return user;
     }
 

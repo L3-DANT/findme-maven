@@ -11,10 +11,15 @@ import java.util.List;
  */
 public class User implements Serializable {
 
+    @Expose
     private String pseudo;
-    private transient String password;
+    @Expose(serialize = false)
+    private  String password;
+    @Expose
     private float latitude,longitude;
+    @Expose
     private List<User> friendList;
+    @Expose
     private String phoneNumber;
 
     public User(){

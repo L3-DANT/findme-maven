@@ -9,10 +9,8 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import org.bson.Document;
-import utils.Utils;
 
 import static com.mongodb.client.model.Filters.*;
-import static utils.Utils.gson;
 
 import javax.ejb.Stateless;
 import java.util.ArrayList;
