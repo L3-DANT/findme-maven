@@ -113,7 +113,7 @@ public class FriendRequestController extends Controller{
     @Path("/fixtures")
     @GET
     public String insertTest(){
-        return gson.toJson(userService.insertTest());
+        return gson.toJson(frService.insertTest());
     }
 
 

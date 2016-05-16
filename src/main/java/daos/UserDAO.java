@@ -48,10 +48,6 @@ public class UserDAO extends DAO {
         return list;
     }
 
-    public void clearCollection(){
-        coll.drop();
-    }
-
 
     /**
      * Finds one {@link User} in database
