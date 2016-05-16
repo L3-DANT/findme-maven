@@ -27,6 +27,21 @@ public class FriendRequestDAO extends DAO{
         super("friendRequest");
     }
 
+    public List<FriendRequest> findAll(){
+        List<FriendRequest> list = new ArrayList<FriendRequest>();
+        MongoCursor<Document> cursor = coll.find().iterator();
+        try {
+            while (cursor.hasNext()) {
+                String s = cursor.next().toJson();
+                System.out.println(s);
+                list.add(gson.fromJson(s,FriendRequest.class));
+            }
+        } finally {
+            cursor.close();
+        }
+        return list;
+    }
+
 
     /**
      * Inserts a friend request in the database
@@ -79,7 +94,7 @@ public class FriendRequestDAO extends DAO{
             throw new NotFoundException("Friend request not found");
     }
 
-    public List<FriendRequest> findByField(String pseudo, String field){
+    public List<FriendRequest> findByField(String field, String pseudo){
         List<FriendRequest> list = new ArrayList<FriendRequest>();
         MongoCursor<Document> cursor = coll.find(eq(field,pseudo)).iterator();
         try {

@@ -16,4 +16,9 @@ public abstract class DAO {
     public DAO(String collection){
         coll = MongoConnection.getDb().getCollection(collection);
     }
+
+    public void clearCollection(){
+        coll.drop();
+    }
+
 }
