@@ -32,9 +32,7 @@ public class FriendRequestDAO extends DAO{
         MongoCursor<Document> cursor = coll.find().iterator();
         try {
             while (cursor.hasNext()) {
-                String s = cursor.next().toJson();
-                System.out.println(s);
-                list.add(gson.fromJson(s,FriendRequest.class));
+                list.add(gson.fromJson(cursor.next().toJson(),FriendRequest.class));
             }
         } finally {
             cursor.close();
