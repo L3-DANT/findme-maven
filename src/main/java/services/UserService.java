@@ -72,28 +72,28 @@ public class UserService {
      */
     public void addFriend(String pseudo1, String pseudo2) throws NotFoundException{
         // Getting users from DB, clearing password and friendList
+        User friend1 = dao.findOneByPseudo(pseudo1);
+        User friend2 = dao.findOneByPseudo(pseudo2);
+
+        // Clearing passwords
+        friend1.setPassword(null);
+        friend2.setPassword(null);
+
+        // Clearing friendList
+        friend1.clearFriendList();
+        friend2.clearFriendList();
+
+        // Getting users from DB
         User user1 = dao.findOneByPseudo(pseudo1);
         User user2 = dao.findOneByPseudo(pseudo2);
 
-        // Clearing passwords
-        user1.setPassword(null);
-        user2.setPassword(null);
-
-        // Clearing friendList
-        user1.clearFriendList();
-        user2.clearFriendList();
-
-        // Getting users from DB
-        User userDB1 = dao.findOneByPseudo(pseudo1);
-        User userDB2 = dao.findOneByPseudo(pseudo2);
-
         // Adding friends in both friendLists
-        userDB1.addFriend(user1);
-        userDB2.addFriend(user2);
+        user1.addFriend(friend2);
+        user2.addFriend(friend1);
 
         // Replacing in DB
-        dao.replaceOne(userDB1);
-        dao.replaceOne(userDB2);
+        dao.replaceOne(user1);
+        dao.replaceOne(user2);
     }
 
     /**

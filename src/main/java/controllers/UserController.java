@@ -1,6 +1,5 @@
 package controllers;
 
-import com.mongodb.MongoException;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.Login;
@@ -10,8 +9,7 @@ import services.UserService;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
-
-import static utils.Utils.gson;
+import javax.ws.rs.core.Response;
 
 /**
  * Controller that manages {@link User}
@@ -25,14 +23,80 @@ public class UserController extends Controller{
     private UserService userService;
 
     /**
-     * Gets every {@link User} in the database
-     * @return the serialized list of users
+     * Gets the user and update its {@link User#friendList}
+     * @param pseudo the pseudo that identifies the {@link User}
+     * @return the {@link User} or false if not found
      */
-    @Path("/v1/users")
+    @Path("v1/{pseudo}")
     @GET
-    public String findAll(){
-        return gson.toJson(userService.findAll());
+    public String getUser(@PathParam("pseudo") String pseudo){
+        try {
+            return gson.toJson(userService.getUser(pseudo));
+        } catch (NotFoundException e) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
     }
+
+    @Path("v1")
+    @PUT
+    @Consumes("application/json")
+    public String signUp(User user){
+        try {
+            return gson.toJson(userService.insertUser(user));
+        } catch (DuplicateDataException e){
+            throw new WebApplicationException(Response.Status.CONFLICT);
+        }
+    }
+
+    /**
+     * Updates given {@link User} in database
+     * @param user the {@link User} to update
+     * @return the serialized {@link User}
+     */
+    @Path("v1")
+    @POST
+    @Consumes("application/json")
+    public String updateUser(User user){
+        try {
+            userService.updateUser(user);
+            return gson.toJson(user);
+        } catch (NotFoundException e) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
+
+    /**
+     *  Connect the user to the application
+     *  @param login the pseudo that identifies the {@Link User}
+     *  @return the {@Link User} if tseudo & password is correct or null if they're not
+     */
+    @Path("v1/login")
+    @POST
+    @Consumes("application/json")
+    public String login(Login login){
+        try {
+            if(userService.connect(login.getPseudo(),login.getPassword())){
+                return gson.toJson(userService.getUser(login.getPseudo()));
+            } else {
+                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+            }
+        } catch (NotFoundException e) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
+
+    @Path("/v1/{pseudo}")
+    @DELETE
+    public String deleteUser(@PathParam("pseudo") String pseudo) {
+        try {
+            userService.deleteUser(pseudo);
+            return null;
+        } catch (NotFoundException e) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+    }
+
+
 
     /**
      * Insert false data in database (use only for tests)
@@ -48,82 +112,6 @@ public class UserController extends Controller{
     @GET
     public void testPusher(){
         pusher.trigger("a","o","i");
-    }
-
-    /**
-     * Updates given {@link User} in database and notify it on the pusher channel
-     * @param user the {@link User} to update
-     * @return the serialized {@link User}
-     */
-    @Path("v1/update")
-    @POST
-    @Consumes("application/json")
-    public String updateUser(User user){
-        try {
-            userService.updateUser(user);
-            pusher.trigger(user.getPseudo(),"updateUser",gson.toJson(user));
-            return jsonResponse(0,"success",null);
-        } catch (NotFoundException e) {
-            return jsonResponse(-1,"user not found",null);
-        }
-    }
-
-    /**
-     * Gets the user and update its {@link User#friendList}
-     * @param pseudo the pseudo that identifies the {@link User}
-     * @return the {@link User} or false if not found
-     */
-    @Path("v1/user-by-pseudo")
-    @GET
-    public String getUser(@QueryParam("pseudo") String pseudo){
-        try {
-            return jsonResponse(0,"success",gson.toJson(userService.getUser(pseudo)));
-        } catch (NotFoundException e) {
-            return jsonResponse(0,"user not found",null);
-        }
-    }
-
-    /**
-     *  Connect the user to the application
-     *  @param login the pseudo that identifies the {@Link User}
-     *  @return the {@Link User} if tseudo & password is correct or null if they're not
-     */
-    @Path("v1/login")
-    @POST
-    @Consumes("application/json")
-    public String login(Login login){
-        try {
-            if(userService.connect(login.getPseudo(),login.getPassword())){
-                return jsonResponse(0,"succes",gson.toJson(userService.getUser(login.getPseudo())));
-            } else {
-                return jsonResponse(-1,"provided pseudo and password don't match",null);
-            }
-        } catch (NotFoundException e) {
-            return jsonResponse(-2,"user not found",null);
-        }
-    }
-
-    @Path("v1/sign-up")
-    @PUT
-    @Consumes("application/json")
-    public String signUp(User user){
-        try {
-            userService.insertUser(user);
-            return jsonResponse(0,"succes",gson.toJson(user));
-        } catch (DuplicateDataException e){
-            return jsonResponse(-1,"user already exists in database",gson.toJson(user));
-        }
-    }
-
-    @Path("/v1/delete")
-    @DELETE
-    public String deleteUser(@QueryParam("pseudo") String pseudo) {
-        try {
-            userService.deleteUser(pseudo);
-            return jsonResponse(0,"succes",null);
-        } catch (NotFoundException e) {
-            return jsonResponse(-1,"User not found",null);
-        }
     }
 
 }

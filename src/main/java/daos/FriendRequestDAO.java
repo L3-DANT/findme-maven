@@ -9,10 +9,8 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import org.bson.Document;
-import utils.Utils;
 
 import static com.mongodb.client.model.Filters.*;
-import static utils.Utils.gson;
 
 import javax.ejb.Stateless;
 import java.util.ArrayList;
@@ -27,6 +25,21 @@ public class FriendRequestDAO extends DAO{
 
     public FriendRequestDAO(){
         super("friendRequest");
+    }
+
+    public List<FriendRequest> findAll(){
+        List<FriendRequest> list = new ArrayList<FriendRequest>();
+        MongoCursor<Document> cursor = coll.find().iterator();
+        try {
+            while (cursor.hasNext()) {
+                String s = cursor.next().toJson();
+                System.out.println(s);
+                list.add(gson.fromJson(s,FriendRequest.class));
+            }
+        } finally {
+            cursor.close();
+        }
+        return list;
     }
 
 
@@ -81,7 +94,7 @@ public class FriendRequestDAO extends DAO{
             throw new NotFoundException("Friend request not found");
     }
 
-    public List<FriendRequest> findByField(String pseudo, String field){
+    public List<FriendRequest> findByField(String field, String pseudo){
         List<FriendRequest> list = new ArrayList<FriendRequest>();
         MongoCursor<Document> cursor = coll.find(eq(field,pseudo)).iterator();
         try {

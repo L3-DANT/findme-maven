@@ -7,6 +7,7 @@ import models.FriendRequest;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -77,4 +78,21 @@ public class FriendRequestService {
         return "["+data+"]";
     }
 
+
+    public List<FriendRequest> insertTest(){
+        dao.clearCollection();
+        List<FriendRequest> list = new ArrayList<FriendRequest>();
+        list.add(new FriendRequest("Antoine","Maxime"));
+        list.add(new FriendRequest("Olivier","Adrien"));
+        list.add(new FriendRequest("Antoine","Nicolas"));
+        list.add(new FriendRequest("Adrien","Nicolas"));
+        for (FriendRequest fr : list) {
+            try {
+                dao.insertOne(fr);
+            } catch (DuplicateDataException e) {
+                continue;
+            }
+        }
+        return dao.findAll();
+    }
 }
