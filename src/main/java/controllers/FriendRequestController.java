@@ -92,13 +92,18 @@ public class FriendRequestController extends Controller{
 
     /**
      * Declines a {@link FriendRequest}, which means removing it from database
-     * @param fr the parsed json
+     * @param caller the caller (or receiver)
+     * @param receiver the receiver (or caller)
      */
     @Path("/v1")
     @DELETE
-    public String declineFriendRequest(FriendRequest fr) {
+    public String declineFriendRequest(@QueryParam("caller") String caller,
+                                       @QueryParam("receiver") String receiver) {
+        if(caller == null || receiver == null){
+            throw new WebApplicationException(Response.Status.BAD_REQUEST);
+        }
         try {
-            frService.deleteOne(fr);
+            frService.deleteOne(new FriendRequest(caller,receiver));
             return null;
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
