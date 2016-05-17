@@ -38,9 +38,7 @@ public class UserDAO extends DAO {
         MongoCursor<Document> cursor = coll.find().iterator();
         try {
             while (cursor.hasNext()) {
-                String s = cursor.next().toJson();
-                System.out.println(s);
-                list.add(gson.fromJson(s,User.class));
+                list.add(gson.fromJson(cursor.next().toJson(),User.class));
             }
         } finally {
             cursor.close();
