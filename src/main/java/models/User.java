@@ -23,20 +23,20 @@ public class User implements Serializable {
     private String phoneNumber;
 
     public User(){
-        this(null, null,0,0);
+        this(null, null,0,0,null);
     }
 
     public User(String pseudo, String password){
-        this(pseudo,password,0,0);
+        this(pseudo,password,0,0,null);
     }
 
-    public User(String pseudo, String password,float latitude, float longitude){
+    public User(String pseudo, String password,float latitude, float longitude, String phoneNumber){
         this.pseudo = pseudo;
         this.password = password;
         this.latitude = latitude;
         this.longitude = longitude;
         this.friendList = new ArrayList<User>();
-        this.phoneNumber = "0000000000";
+        this.phoneNumber = phoneNumber;
     }
 
     public String getPseudo() {

@@ -1,7 +1,5 @@
 package daos;
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.IndexOptions;

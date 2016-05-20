@@ -6,6 +6,7 @@ import daos.UserDAO;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.User;
+import security.BCrypt;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
@@ -36,12 +37,12 @@ public class UserService {
     public List<User> insertTest(){
         dao.clearCollection();
         List<User> list = new ArrayList<User>();
-        list.add(new User("Antoine","123", 48.84927f,2.35268f));
-        list.add(new User("François","123", 48.84862f,2.36071f));
-        list.add(new User("Maxime","123", 48.84723f,2.35835f));
-        list.add(new User("Nicolas","123", 48.84461f,2.35221f));
-        list.add(new User("Adrien","123", 48.84427f,2.35865f));
-        list.add(new User("Olivier","123", 48.84138f,2.35972f));
+        list.add(new User("Antoine","123", 48.84927f,2.35268f,"0650555075"));
+        list.add(new User("François","123", 48.84862f,2.36071f,"06 60 76 99 44"));
+        list.add(new User("Maxime","123", 48.84723f,2.35835f,"+33667479299"));
+        list.add(new User("Nicolas","123", 48.84461f,2.35221f,"+33 6 02 24 17 93"));
+        list.add(new User("Adrien","123", 48.84427f,2.35865f,null));
+        list.add(new User("Olivier","123", 48.84138f,2.35972f,null));
         for (User user : list) {
             try {
                 dao.insertOne(user);
@@ -53,6 +54,9 @@ public class UserService {
     }
 
     public User insertUser(User user) throws DuplicateDataException {
+        if(user.getPassword() != null){
+            user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
+        }
         return dao.insertOne(user);
     }
 
@@ -61,6 +65,9 @@ public class UserService {
      * @param user the user to update
      */
     public void updateUser(User user) throws NotFoundException{
+        if(!BCrypt.checkpw(user.getPassword(),dao.findOneByPseudo(user.getPseudo()).getPassword())){
+            user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
+        }
         dao.replaceOne(user);
     }
 
@@ -74,10 +81,6 @@ public class UserService {
         // Getting users from DB, clearing password and friendList
         User friend1 = dao.findOneByPseudo(pseudo1);
         User friend2 = dao.findOneByPseudo(pseudo2);
-
-        // Clearing passwords
-        friend1.setPassword(null);
-        friend2.setPassword(null);
 
         // Clearing friendList
         friend1.clearFriendList();
@@ -114,7 +117,7 @@ public class UserService {
 
     public boolean connect(String pseudo, String password) throws NotFoundException{
         User user = dao.findOneByPseudo(pseudo);
-        return password.equals(user.getPassword());
+        return BCrypt.checkpw(password,user.getPassword());
     }
 
     public void deleteUser(String pseudo) throws NotFoundException {
