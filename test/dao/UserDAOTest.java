@@ -54,17 +54,34 @@ public class UserDAOTest extends DAOTest{
         dao.insertOne(user);
     }
 
-
     @Test
     public void replaceOneSuccess() throws NotFoundException{
         User u = new User("Alfred","456");
         User test = dao.findOneByPseudo(u.getPseudo());
-        Assert.assertFalse(u.getPassword().equals(test.getPassword()));
+        Assert.assertNotEquals(u.getPassword(),test.getPassword());
 
         dao.replaceOne(u);
         test = dao.findOneByPseudo(u.getPseudo());
-        Assert.assertTrue(test.equals(u));
-        Assert.assertTrue(u.getPassword().equals(test.getPassword()));
+        Assert.assertEquals(test,u);
+        Assert.assertEquals(u.getPassword(),test.getPassword());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void replaceOneNotFoundException() throws NotFoundException {
+        User u = new User("Bob","123");
+        dao.replaceOne(u);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteOneSuccess() throws NotFoundException {
+        dao.deleteOne("Alfred");
+        dao.findOneByPseudo("Alfred");
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteOneNotFoundException() throws NotFoundException {
+        dao.deleteOne("Bob");
+
     }
 
 }
