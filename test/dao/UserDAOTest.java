@@ -1,32 +1,28 @@
 package dao;
 
 
-import com.google.gson.Gson;
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoCollection;
 import daos.UserDAO;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.User;
-import org.bson.Document;
 import org.junit.*;
+import utils.DatabaseUtils;
 
 
-public class UserDAOTest extends DAOTest{
+public class UserDAOTest extends AbstractDAOTest {
 
     private UserDAO dao = new UserDAO();
-    private User user = new User("Alfred","123");
+    private User alfred = new User("Alfred","123");
+    private User bob = new User("Bob","123");
 
     @Before
     public void insertBefore(){
-        MongoClient client = new MongoClient(IP, PORT);
-        MongoCollection<Document> collection = client.getDatabase(DB_NAME).getCollection("user");
-        collection.insertOne(Document.parse(new Gson().toJson(user)));
+        DatabaseUtils.initialiseCollection("user", alfred,bob);
     }
 
     @After
     public void dropColl(){
-        dao.clearCollection();
+        DatabaseUtils.clearCollection("user");
     }
 
     @Test
@@ -40,7 +36,7 @@ public class UserDAOTest extends DAOTest{
 
     @Test(expected = NotFoundException.class)
     public void findOneByPseudoNotFoundException() throws NotFoundException{
-        dao.findOneByPseudo("Jean-Georges");
+        dao.findOneByPseudo("Meuporg");
     }
 
     @Test
@@ -51,7 +47,7 @@ public class UserDAOTest extends DAOTest{
 
     @Test(expected = DuplicateDataException.class)
     public void testInsertDuplicateException() throws DuplicateDataException {
-        dao.insertOne(user);
+        dao.insertOne(alfred);
     }
 
     @Test
@@ -68,7 +64,7 @@ public class UserDAOTest extends DAOTest{
 
     @Test(expected = NotFoundException.class)
     public void replaceOneNotFoundException() throws NotFoundException {
-        User u = new User("Bob","123");
+        User u = new User("Meuporg","123");
         dao.replaceOne(u);
     }
 
@@ -80,8 +76,7 @@ public class UserDAOTest extends DAOTest{
 
     @Test(expected = NotFoundException.class)
     public void deleteOneNotFoundException() throws NotFoundException {
-        dao.deleteOne("Bob");
-
+        dao.deleteOne("Meuporg");
     }
 
 }

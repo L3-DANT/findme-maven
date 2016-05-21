@@ -53,8 +53,9 @@ public class UserDAO extends DAO {
      */
     public User findOneByPseudo(String pseudo) throws NotFoundException{
         Document doc = coll.find(eq("pseudo",pseudo)).first();
-        if(doc == null)
+        if(doc == null) {
             throw new NotFoundException("User not found");
+        }
         User user = gson.fromJson(doc.toJson(),User.class);
         return user;
     }

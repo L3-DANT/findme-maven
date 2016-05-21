@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="com.findme.user.TestUser" time="0.082" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="services.UserServiceTest" time="0.16" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2016.1.2"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -63,5 +63,7 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.findme.user.TestUser" name="testEquals" time="0.004"/>
+  <testcase classname="services.UserServiceTest" name="getUserWithFail" time="0.125"/>
+  <testcase classname="services.UserServiceTest" name="getUserWithFriendsAndSuccess" time="0.007"/>
+  <testcase classname="services.UserServiceTest" name="getUserNoFriendsAndSuccess" time="0.001"/>
 </testsuite>

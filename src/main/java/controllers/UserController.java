@@ -2,14 +2,16 @@ package controllers;
 
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
-import models.Login;
 import models.User;
 import services.UserService;
 
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Controller that manages {@link User}
@@ -19,8 +21,7 @@ import javax.ws.rs.core.Response;
 @Produces("application/json")
 public class UserController extends Controller{
 
-    @Inject
-    private UserService userService;
+    private UserService userService = new UserService();
 
     /**
      * Gets the user and update its {@link User#friendList}
@@ -31,7 +32,8 @@ public class UserController extends Controller{
     @GET
     public String getUser(@PathParam("pseudo") String pseudo){
         try {
-            return gson.toJson(userService.getUser(pseudo));
+            String s = gson.toJson(userService.getUser(pseudo));
+            return s;
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -68,15 +70,16 @@ public class UserController extends Controller{
     /**
      *  Connect the user to the application
      *  @param login the pseudo that identifies the {@Link User}
-     *  @return the {@Link User} if tseudo & password is correct or null if they're not
+     *  @return the {@Link User} if pseudo & password is correct or null if they're not
      */
     @Path("v1/login")
     @POST
     @Consumes("application/json")
-    public String login(Login login){
+    public String login(String credentials){
+        Map<String,String> map = gson.fromJson(credentials, HashMap.class);
         try {
-            if(userService.connect(login.getPseudo(),login.getPassword())){
-                return gson.toJson(userService.getUser(login.getPseudo()));
+            if(userService.connect(map.get("pseudo"),map.get("password"))){
+                return gson.toJson(userService.getUser(map.get("pseudo")));
             } else {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }

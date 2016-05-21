@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="1" failures="0" name="com.findme.user.TestUser" time="0.082" errors="0" skipped="0">
+<testsuite tests="8" failures="0" name="dao.UserDAOTest" time="3.917" errors="0" skipped="0">
   <properties>
     <property name="idea.version" value="2016.1.2"/>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
@@ -63,5 +63,12 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase classname="com.findme.user.TestUser" name="testEquals" time="0.004"/>
+  <testcase classname="dao.UserDAOTest" name="replaceOneSuccess" time="0.077"/>
+  <testcase classname="dao.UserDAOTest" name="deleteOneNotFoundException" time="0.032"/>
+  <testcase classname="dao.UserDAOTest" name="testInsertSuccess" time="0.016"/>
+  <testcase classname="dao.UserDAOTest" name="replaceOneNotFoundException" time="0.012"/>
+  <testcase classname="dao.UserDAOTest" name="testInsertDuplicateException" time="0.013"/>
+  <testcase classname="dao.UserDAOTest" name="findOneByPseudoNotFoundException" time="0.013"/>
+  <testcase classname="dao.UserDAOTest" name="findOneByPseudoSuccess" time="0.015"/>
+  <testcase classname="dao.UserDAOTest" name="deleteOneSuccess" time="0.02"/>
 </testsuite>

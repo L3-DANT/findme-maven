@@ -5,18 +5,19 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
+import javax.ws.rs.core.Context;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Service class that manages {@link FriendRequest}
  */
-@Stateless
+@Singleton
 public class FriendRequestService {
 
-    @Inject
+    @Context
     private FriendRequestDAO dao;
 
 

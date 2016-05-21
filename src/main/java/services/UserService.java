@@ -1,30 +1,25 @@
 package services;
 
-import com.mongodb.MongoException;
-import com.mongodb.MongoWriteException;
 import daos.UserDAO;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.User;
 import security.BCrypt;
 
-import javax.ejb.Stateless;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.json.JsonObject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
+import javax.ws.rs.ext.Provider;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Service class that manages {@link User}
  */
-@Stateless
+
 public class UserService {
     @Inject
-    private UserDAO dao;
+    private UserDAO dao = new UserDAO();
 
     /**
      * Finds all users
