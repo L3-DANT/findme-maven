@@ -33,6 +33,7 @@ public class DatabaseUtils {
     public static final String DB_NAME = "findme";
 
     private static Map<String,MongoCollection<Document>> map = new HashMap<String,MongoCollection<Document>>();
+    private static MongoClient client;
 
     /**
      * Initialises test database
@@ -53,6 +54,7 @@ public class DatabaseUtils {
         System.out.println("Launching database ...");
         mongodProcess = mongodExecutable.start();
         System.out.println("Launch successful");
+        client = new MongoClient(IP, PORT);
     }
 
 
@@ -78,15 +80,16 @@ public class DatabaseUtils {
     }
 
     public static void initialiseCollection(String name, Object... docs) {
-        MongoClient client = new MongoClient(IP, PORT);
         map.put(name,client.getDatabase(DB_NAME).getCollection(name));
         for (Object o : docs) {
             map.get(name).insertOne(Document.parse(new Gson().toJson(o)));
         }
     }
 
-    public static void clearCollection(String name) {
-        map.get(name).drop();
-        map.remove(name);
+    public static void clearCollection(String... names) {
+        for (String name : names) {
+            map.get(name).drop();
+            map.remove(name);
+        }
     }
 }

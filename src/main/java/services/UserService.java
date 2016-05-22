@@ -60,7 +60,8 @@ public class UserService {
      * @param user the user to update
      */
     public void updateUser(User user) throws NotFoundException{
-        if(!BCrypt.checkpw(user.getPassword(),dao.findOneByPseudo(user.getPseudo()).getPassword())){
+        User userDB = dao.findOneByPseudo(user.getPseudo());
+        if(!BCrypt.checkpw(user.getPassword(),userDB.getPassword())){
             user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
         }
         dao.replaceOne(user);

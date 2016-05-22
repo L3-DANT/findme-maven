@@ -17,8 +17,7 @@ import java.util.List;
 @Singleton
 public class FriendRequestService {
 
-    @Context
-    private FriendRequestDAO dao;
+    private FriendRequestDAO dao = new FriendRequestDAO();
 
 
     /**

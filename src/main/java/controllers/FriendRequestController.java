@@ -23,11 +23,9 @@ import java.util.List;
 @Produces("application/json")
 public class FriendRequestController extends Controller{
 
-    @Inject
-    private FriendRequestService frService;
+    private FriendRequestService frService = new FriendRequestService();
 
-    @Inject
-    private UserService userService;
+    private UserService userService = new UserService();
 
     /**
      * Gets a {@link FriendRequest}
@@ -46,8 +44,18 @@ public class FriendRequestController extends Controller{
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
         } else if(caller == null){
+            try {
+                userService.getUser(receiver);
+            } catch(NotFoundException e) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
             return frService.findByReceiver(receiver);
         } else {
+            try {
+                userService.getUser(caller);
+            } catch (NotFoundException e) {
+                throw new WebApplicationException(Response.Status.NOT_FOUND);
+            }
             return frService.findByCaller(caller);
         }
 
@@ -63,8 +71,12 @@ public class FriendRequestController extends Controller{
     @Consumes("application/json")
     public String createFriendRequest(FriendRequest fr) {
         try {
+            userService.getUser(fr.getCaller());
+            userService.getUser(fr.getReceiver());
             frService.insertFriendRequest(fr);
             return null;
+        } catch(NotFoundException e) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch(DuplicateDataException e){
             throw new WebApplicationException(Response.Status.CONFLICT);
         }

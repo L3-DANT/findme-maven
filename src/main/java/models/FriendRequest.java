@@ -39,4 +39,13 @@ public class FriendRequest {
     public String toString(){
         return "caller:"+caller+"/receiver:"+receiver;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof FriendRequest
+                && ((((FriendRequest) o).getReceiver().equals(receiver)
+                    && ((FriendRequest) o).getCaller().equals(caller))
+                || (((FriendRequest) o).getReceiver().equals(caller)
+                    && ((FriendRequest) o).getCaller().equals(receiver)));
+    }
 }

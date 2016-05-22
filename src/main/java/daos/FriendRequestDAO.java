@@ -24,7 +24,7 @@ import java.util.List;
 public class FriendRequestDAO extends DAO{
 
     public FriendRequestDAO(){
-        super("friendRequest");
+        super("friendrequest");
     }
 
     public List<FriendRequest> findAll(){
@@ -95,6 +95,7 @@ public class FriendRequestDAO extends DAO{
     public List<FriendRequest> findByField(String field, String pseudo){
         List<FriendRequest> list = new ArrayList<FriendRequest>();
         MongoCursor<Document> cursor = coll.find(eq(field,pseudo)).iterator();
+
         try {
             while (cursor.hasNext()) {
                 list.add(gson.fromJson(cursor.next().toJson(),FriendRequest.class));
