@@ -26,8 +26,16 @@ public class User implements Serializable {
         this(null, null,0,0,null);
     }
 
+    public User(String pseudo) {
+        this(pseudo,null,0,0,null);
+    }
+
     public User(String pseudo, String password){
         this(pseudo,password,0,0,null);
+    }
+
+    public User(String pseudo, float latitude, float longitude,String phoneNumber) {
+        this(pseudo,null,latitude,longitude,phoneNumber);
     }
 
     public User(String pseudo, String password,float latitude, float longitude, String phoneNumber){

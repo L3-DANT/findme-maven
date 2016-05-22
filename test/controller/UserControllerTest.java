@@ -1,6 +1,7 @@
 package controller;
 
 import controllers.UserController;
+import exceptions.NotFoundException;
 import models.User;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.After;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
 
 import security.BCrypt;
+import services.UserService;
 import utils.DatabaseUtils;
 
 import static org.junit.Assert.assertEquals;
@@ -20,10 +22,26 @@ import static org.junit.Assert.assertTrue;
 public class UserControllerTest extends AbstractControllerTest {
 
     private User alfred = new User("Alfred", BCrypt.hashpw("123", (BCrypt.gensalt(12))));
+    private User u = new User("Bob","123");
+    private User u2 = new User("John","123");
+    private User u3 = new User("Fred","123");
+
+    private UserService userService = new UserService();
 
     @Before
-    public void insertBefore(){
-        DatabaseUtils.initialiseCollection("user", alfred);
+    public void insertBefore() {
+        User ucopy = new User("Bob","123");
+        User u2copy = new User("John","123");
+        User u3copy = new User("Fred","123");
+        u.addFriend(alfred);
+        u2.addFriend(alfred);
+        u3.addFriend(alfred);
+        alfred.addFriend(ucopy);
+        alfred.addFriend(u2copy);
+        alfred.addFriend(u3copy);
+
+
+        DatabaseUtils.initialiseCollection("user", alfred,u,u2,u3);
     }
 
     @After
@@ -53,7 +71,7 @@ public class UserControllerTest extends AbstractControllerTest {
 
     @Test
     public void PUTSuccess() {
-        User user = new User("John","789");
+        User user = new User("Meuporg","789");
         String s = "{\"pseudo\":\"" + user.getPseudo() + "\",\"password\":\"" + user.getPassword() + "\"}";
         Response response = target("user/v1").request().put(Entity.json(s));
 
@@ -77,7 +95,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void POSTsuccess() {
+    public void POSTsuccess() throws NotFoundException {
         alfred.setPassword("abc");
         //checks response
         String s = "{\"pseudo\":\"" + alfred.getPseudo() + "\",\"password\":\"" + alfred.getPassword() + "\"}";
@@ -89,6 +107,32 @@ public class UserControllerTest extends AbstractControllerTest {
         assertTrue(response.getStatus() < 300);
         User u = gson.fromJson(response.readEntity(String.class),User.class);
         assertEquals(alfred,u);
+
+        assertTrue(userService.connect(alfred.getPseudo(),"abc"));
+    }
+
+    @Test
+    public void POSTRemoveFriend() throws NotFoundException {
+        //make sure users do have friends
+        User alfredcopy = userService.getUser(alfred.getPseudo());
+        assertEquals(alfredcopy.getFriendList().size(),3);
+        User ucopy = userService.getUser(u.getPseudo());
+        assertEquals(ucopy.getFriendList().size(),1);
+
+        //remove two friends, including u (= ucopy), keeps u3 (Fred)
+        String s3 = "{\"pseudo\":\"" + u3.getPseudo() + "\",\"password\":\"" + u3.getPassword() + "\"}";
+        String s = "{\"pseudo\":\"" + alfred.getPseudo() + "\",\"password\":\"" + alfred.getPassword() + "\",\"friendList\":["+ s3 + "]}";
+        Response response = target("user/v1").request().post(Entity.json(s));
+        assertTrue(response.getStatus() < 300);
+
+        //make sure friends have been removed from the two users
+        alfredcopy = userService.getUser(alfred.getPseudo());
+        assertEquals(alfred,alfredcopy);
+        assertEquals(alfredcopy.getFriendList().size(),1);
+        ucopy = userService.getUser(u.getPseudo());
+        assertEquals(u,ucopy);
+        assertEquals(ucopy.getFriendList().size(),0);
+
     }
 
     @Test
@@ -134,5 +178,28 @@ public class UserControllerTest extends AbstractControllerTest {
         String s = "{\"pseudo\":\"Meuporg\",\"password\":\"123\"}";
         Response response = target("user/v1/login").request().post(Entity.json(s));
         assertEquals(response.getStatus(),404);
+    }
+
+    @Test
+    public void updateCoordinatesSuccess() {
+        float lat = 2.85f;
+        float lon = 21.785f;
+        float epsilon = 0.00000001f;
+        String s = "{\"pseudo\":\"" + alfred.getPseudo() + "\",\"latitude\":" + lat + ", \"longitude\":" + lon + "}";
+        Response response = target("user/v1/update-coordinates").request().post(Entity.json(s));
+        assertTrue(response.getStatus() < 300);
+        response = target("user/v1/"+alfred.getPseudo()).request().get();
+        assertTrue(response.getStatus() < 300);
+        User u = gson.fromJson(response.readEntity(String.class),User.class);
+        assertEquals(alfred,u);
+        assertTrue(Math.abs(u.getLatitude() - lat) < epsilon);
+        assertTrue(Math.abs(u.getLongitude() - lon) < epsilon);
+    }
+
+    @Test
+    public void updateCoordinates404() {
+        String s = "{\"pseudo\":\"Jean-Georges\",\"latitude\":21.45, \"longitude\":25.548}";
+        Response response = target("user/v1/update-coordinates").request().post(Entity.json(s));
+        assertEquals(response.getStatus(), 404);
     }
 }

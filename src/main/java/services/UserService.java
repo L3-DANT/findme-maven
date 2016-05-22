@@ -7,18 +7,17 @@ import models.User;
 import security.BCrypt;
 
 import javax.ejb.Singleton;
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.ext.Provider;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
  * Service class that manages {@link User}
  */
-
+@Singleton
 public class UserService {
-    @Inject
+
     private UserDAO dao = new UserDAO();
 
     /**
@@ -32,12 +31,12 @@ public class UserService {
     public List<User> insertTest(){
         dao.clearCollection();
         List<User> list = new ArrayList<User>();
-        list.add(new User("Antoine","123", 48.84927f,2.35268f,"0650555075"));
-        list.add(new User("François","123", 48.84862f,2.36071f,"06 60 76 99 44"));
-        list.add(new User("Maxime","123", 48.84723f,2.35835f,"+33667479299"));
-        list.add(new User("Nicolas","123", 48.84461f,2.35221f,"+33 6 02 24 17 93"));
-        list.add(new User("Adrien","123", 48.84427f,2.35865f,null));
-        list.add(new User("Olivier","123", 48.84138f,2.35972f,null));
+        list.add(new User("Antoine",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84927f,2.35268f,"0650555075"));
+        list.add(new User("François",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84862f,2.36071f,"06 60 76 99 44"));
+        list.add(new User("Maxime",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84723f,2.35835f,"+33667479299"));
+        list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84461f,2.35221f,"+33 6 02 24 17 93"));
+        list.add(new User("Adrien",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84427f,2.35865f,null));
+        list.add(new User("Olivier",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84138f,2.35972f,null));
         for (User user : list) {
             try {
                 dao.insertOne(user);
@@ -59,12 +58,43 @@ public class UserService {
      * Updates an user
      * @param user the user to update
      */
-    public void updateUser(User user) throws NotFoundException{
+    public List<String> updateUser(User user) throws NotFoundException{
         User userDB = dao.findOneByPseudo(user.getPseudo());
-        if(!BCrypt.checkpw(user.getPassword(),userDB.getPassword())){
-            user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
+        User insert = new User(userDB.getPseudo(),userDB.getPassword(),userDB.getLatitude(),userDB.getLongitude(),userDB.getPhoneNumber());
+        for (User usr : userDB.getFriendList()) {
+            insert.addFriend(new User(usr.getPseudo(),userDB.getLatitude(),userDB.getLongitude(),userDB.getPhoneNumber()));
         }
-        dao.replaceOne(user);
+        List<String> ret = null;
+
+        if(user.getLatitude() != 0)
+            insert.setLatitude(user.getLatitude());
+        if(user.getLongitude() != 0)
+            insert.setLongitude(user.getLongitude());
+        if(user.getPhoneNumber() != null)
+            insert.setPhoneNumber(user.getPhoneNumber());
+
+        //check for eventual removal of friends
+        List<User> listUser = user.getFriendList();
+        List<User> listUserDB = userDB.getFriendList();
+        if(listUser != null && listUser.size() < listUserDB.size()) {
+            ret = new ArrayList<String>();
+            for (User iter : listUserDB) {
+                if(!listUser.contains(iter)) {
+                    User tmp = dao.findOneByPseudo(iter.getPseudo());
+                    tmp.removeFriend(insert);
+                    dao.replaceOne(tmp);
+                    ret.add(tmp.getPseudo());
+                    insert.removeFriend(new User(iter.getPseudo()));
+                }
+            }
+        }
+
+        //check for eventual password change
+        if(user.getPassword() != null && !BCrypt.checkpw(user.getPassword(),insert.getPassword())){
+            insert.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
+        }
+        dao.replaceOne(insert);
+        return ret;
     }
 
     /**
@@ -101,7 +131,7 @@ public class UserService {
      * @return the {@link User}
      * @throws NotFoundException if the User can't be found
      */
-        public User getUser(String pseudo) throws NotFoundException{
+    public User getUser(String pseudo) throws NotFoundException{
         User user = dao.findOneByPseudo(pseudo);
         for (User friend : user.getFriendList()) {
             User tmp = dao.findOneByPseudo(friend.getPseudo());
@@ -118,6 +148,13 @@ public class UserService {
 
     public void deleteUser(String pseudo) throws NotFoundException {
         dao.deleteOne(pseudo);
+    }
+
+    public void updateCoordinates(User user) throws NotFoundException {
+        User u = dao.findOneByPseudo(user.getPseudo());
+        u.setLongitude(user.getLongitude());
+        u.setLatitude(user.getLatitude());
+        dao.replaceOne(u);
     }
 
 }

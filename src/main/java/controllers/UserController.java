@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -43,8 +44,9 @@ public class UserController extends Controller{
     @Path("v1")
     @PUT
     @Consumes("application/json")
-    public String signUp(User user){
+    public String signUp(String u){
         try {
+            User user = gson.fromJson(u,User.class);
             return gson.toJson(userService.insertUser(user));
         } catch (DuplicateDataException e){
             throw new WebApplicationException(Response.Status.CONFLICT);
@@ -59,10 +61,11 @@ public class UserController extends Controller{
     @Path("v1")
     @POST
     @Consumes("application/json")
-    public String updateUser(User user){
+    public String updateUser(String u){
         try {
-            userService.updateUser(user);
-            return gson.toJson(user);
+            User user = gson.fromJson(u,User.class);
+            List<String> list = userService.updateUser(user);
+            return u;
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -87,6 +90,20 @@ public class UserController extends Controller{
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
+    }
+
+    @Path("v1/update-coordinates")
+    @POST
+    @Consumes("application/json")
+    public String updateCoordinates(String u){
+        try {
+            User user = gson.fromJson(u,User.class);
+            userService.updateCoordinates(user);
+        } catch (NotFoundException e) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        return null;
+
     }
 
     @Path("/v1/{pseudo}")

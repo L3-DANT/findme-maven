@@ -147,4 +147,31 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
         assertNotEquals(u2.getFriendList().size(),0);
         assertEquals(u2.getFriendList().get(0),u1);
     }
+
+    @Test
+    public void POST404(){
+        String s = "{\"caller\":\"" + fr.getCaller() + "\",\"receiver\":\"Jean-Georges\"}";
+        Response response = target("friendrequest/v1").request().post(Entity.json(s));
+        assertEquals(response.getStatus(), 404);
+    }
+
+    @Test
+    public void DELETESuccess() {
+        Response  response = target("friendrequest/v1").queryParam("caller",fr.getCaller()).queryParam("receiver",fr.getReceiver()).request().delete();
+        assertTrue(response.getStatus() < 300);
+        response = target("friendrequest/v1").queryParam("caller",fr.getCaller()).queryParam("receiver",fr.getReceiver()).request().get();
+        assertEquals(response.getStatus(), 404);
+    }
+
+    @Test
+    public void DELETE400() {
+        Response  response = target("friendrequest/v1").queryParam("caller",fr.getCaller()).request().delete();
+        assertEquals(response.getStatus(), 400);
+    }
+
+    @Test
+    public void DELETE404() {
+        Response  response = target("friendrequest/v1").queryParam("caller","John Lennon").queryParam("receiver",fr.getReceiver()).request().delete();
+        assertEquals(response.getStatus(), 404);
+    }
 }
