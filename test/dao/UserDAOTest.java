@@ -8,16 +8,17 @@ import models.User;
 import org.junit.*;
 import utils.DatabaseUtils;
 
+import static org.junit.Assert.*;
+
 
 public class UserDAOTest extends AbstractDAOTest {
 
     private UserDAO dao = new UserDAO();
     private User alfred = new User("Alfred","123");
-    private User bob = new User("Bob","123");
 
     @Before
     public void insertBefore(){
-        DatabaseUtils.initialiseCollection("user", alfred,bob);
+        DatabaseUtils.initialiseCollection("user", alfred);
     }
 
     @After
@@ -29,9 +30,9 @@ public class UserDAOTest extends AbstractDAOTest {
     public void findOneByPseudoSuccess() throws NotFoundException{
         String pseudo = "Alfred";
         Object u = dao.findOneByPseudo(pseudo);
-        Assert.assertNotNull(u);
-        Assert.assertTrue(u instanceof User);
-        Assert.assertEquals(((User)u).getPseudo(),pseudo);
+        assertNotNull(u);
+        assertTrue(u instanceof User);
+        assertEquals(((User)u).getPseudo(),pseudo);
     }
 
     @Test(expected = NotFoundException.class)
@@ -42,7 +43,7 @@ public class UserDAOTest extends AbstractDAOTest {
     @Test
     public void testInsertSuccess() throws DuplicateDataException, NotFoundException {
         User u = dao.insertOne(new User("Jean-Georges","123"));
-        Assert.assertEquals(dao.findOneByPseudo(u.getPseudo()),u);
+        assertEquals(dao.findOneByPseudo(u.getPseudo()),u);
     }
 
     @Test(expected = DuplicateDataException.class)
@@ -54,12 +55,12 @@ public class UserDAOTest extends AbstractDAOTest {
     public void replaceOneSuccess() throws NotFoundException{
         User u = new User("Alfred","456");
         User test = dao.findOneByPseudo(u.getPseudo());
-        Assert.assertNotEquals(u.getPassword(),test.getPassword());
+        assertNotEquals(u.getPassword(),test.getPassword());
 
         dao.replaceOne(u);
         test = dao.findOneByPseudo(u.getPseudo());
-        Assert.assertEquals(test,u);
-        Assert.assertEquals(u.getPassword(),test.getPassword());
+        assertEquals(test,u);
+        assertEquals(u.getPassword(),test.getPassword());
     }
 
     @Test(expected = NotFoundException.class)

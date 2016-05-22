@@ -1,8 +1,6 @@
 package controller;
 
-
 import controllers.FriendRequestController;
-import controllers.UserController;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import models.User;
@@ -10,16 +8,13 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import services.FriendRequestService;
 import services.UserService;
 import utils.DatabaseUtils;
-
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
-
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -35,6 +30,7 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
     private FriendRequest fr3 = new FriendRequest("John","Bob");
 
     private UserService userService = new UserService();
+    private FriendRequestService frService = new FriendRequestService();
 
     @Before
     public void insertBefore(){
@@ -54,14 +50,14 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
 
     @Test
     public void GETSuccess() {
-        Response response = target("friendrequest/v1").queryParam("caller","Alfred").queryParam("receiver","Meuporg").request().get();
-        assertEquals(response.getStatus(),404);
+        Response response = target("friendrequest/v1").queryParam("caller",fr.getCaller()).queryParam("receiver",fr.getReceiver()).request().get();
+        assertTrue(response.getStatus() < 300);
     }
 
     @Test
     public void GET404() {
-        Response response = target("friendrequest/v1").queryParam("caller",fr.getCaller()).queryParam("receiver",fr.getReceiver()).request().get();
-        assertTrue(response.getStatus() < 300);
+        Response response = target("friendrequest/v1").queryParam("caller","Alfred").queryParam("receiver","Meuporg").request().get();
+        assertEquals(response.getStatus(),404);
     }
 
     @Test
@@ -99,7 +95,7 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
     }
 
     @Test
-    public void PUTSuccess() {
+    public void PUTSuccess() throws NotFoundException {
         FriendRequest f = new FriendRequest("Meuporg","John");
         String s = "{\"caller\":\"" + f.getCaller() + "\",\"receiver\":\"" + f.getReceiver() + "\"}";
         Response response = target("friendrequest/v1").request().put(Entity.json(s));
@@ -108,9 +104,7 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
         assertTrue(response.getStatus() < 300);
 
         //checks database
-        response = target("friendrequest/v1").queryParam("caller",f.getCaller()).queryParam("receiver",f.getReceiver()).request().get();
-        assertTrue(response.getStatus() < 300);
-        FriendRequest friendRequest = gson.fromJson(response.readEntity(String.class),FriendRequest.class);
+        FriendRequest friendRequest = frService.getFriendRequestByPseudos(f.getCaller(),f.getReceiver());
         assertEquals(friendRequest,f);
     }
 
@@ -155,12 +149,11 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
         assertEquals(response.getStatus(), 404);
     }
 
-    @Test
-    public void DELETESuccess() {
+    @Test(expected = NotFoundException.class)
+    public void DELETESuccess() throws NotFoundException {
         Response  response = target("friendrequest/v1").queryParam("caller",fr.getCaller()).queryParam("receiver",fr.getReceiver()).request().delete();
         assertTrue(response.getStatus() < 300);
-        response = target("friendrequest/v1").queryParam("caller",fr.getCaller()).queryParam("receiver",fr.getReceiver()).request().get();
-        assertEquals(response.getStatus(), 404);
+        frService.getFriendRequestByPseudos(fr.getCaller(),fr.getReceiver());
     }
 
     @Test

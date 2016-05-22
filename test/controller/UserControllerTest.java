@@ -70,7 +70,7 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void PUTSuccess() {
+    public void PUTSuccess() throws NotFoundException {
         User user = new User("Meuporg","789");
         String s = "{\"pseudo\":\"" + user.getPseudo() + "\",\"password\":\"" + user.getPassword() + "\"}";
         Response response = target("user/v1").request().put(Entity.json(s));
@@ -81,9 +81,7 @@ public class UserControllerTest extends AbstractControllerTest {
         assertEquals(user,u);
 
         //checks database
-        response = target("user/v1/"+user.getPseudo()).request().get();
-        assertTrue(response.getStatus() < 300);
-        u = gson.fromJson(response.readEntity(String.class),User.class);
+        u = userService.getUser(user.getPseudo());
         assertEquals(user,u);
     }
 
@@ -103,9 +101,7 @@ public class UserControllerTest extends AbstractControllerTest {
         assertTrue(response.getStatus() < 300);
 
         //checks database
-        response = target("user/v1/"+alfred.getPseudo()).request().get();
-        assertTrue(response.getStatus() < 300);
-        User u = gson.fromJson(response.readEntity(String.class),User.class);
+        User u = userService.getUser(alfred.getPseudo());
         assertEquals(alfred,u);
 
         assertTrue(userService.connect(alfred.getPseudo(),"abc"));
@@ -119,7 +115,7 @@ public class UserControllerTest extends AbstractControllerTest {
         User ucopy = userService.getUser(u.getPseudo());
         assertEquals(ucopy.getFriendList().size(),1);
 
-        //remove two friends, including u (= ucopy), keeps u3 (Fred)
+        //remove two friends, including u (= ucopy), keeps u3 (Fred) by not putting them in the json
         String s3 = "{\"pseudo\":\"" + u3.getPseudo() + "\",\"password\":\"" + u3.getPassword() + "\"}";
         String s = "{\"pseudo\":\"" + alfred.getPseudo() + "\",\"password\":\"" + alfred.getPassword() + "\",\"friendList\":["+ s3 + "]}";
         Response response = target("user/v1").request().post(Entity.json(s));
@@ -129,10 +125,10 @@ public class UserControllerTest extends AbstractControllerTest {
         alfredcopy = userService.getUser(alfred.getPseudo());
         assertEquals(alfred,alfredcopy);
         assertEquals(alfredcopy.getFriendList().size(),1);
+        assertEquals(alfredcopy.getFriendList().get(0),u3);
         ucopy = userService.getUser(u.getPseudo());
         assertEquals(u,ucopy);
         assertEquals(ucopy.getFriendList().size(),0);
-
     }
 
     @Test
@@ -142,15 +138,14 @@ public class UserControllerTest extends AbstractControllerTest {
         assertEquals(response.getStatus(),404);
     }
 
-    @Test
-    public void DELETESuccess() {
+    @Test(expected = NotFoundException.class)
+    public void DELETESuccess() throws NotFoundException {
         //checks response
         Response response = target("user/v1/"+alfred.getPseudo()).request().delete();
         assertTrue(response.getStatus() < 300);
 
         //checks database
-        response = target("user/v1/"+alfred.getPseudo()).request().get();
-        assertEquals(response.getStatus(),404);
+        userService.getUser(alfred.getPseudo());
     }
 
     @Test
@@ -181,16 +176,15 @@ public class UserControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    public void updateCoordinatesSuccess() {
+    public void updateCoordinatesSuccess() throws NotFoundException {
         float lat = 2.85f;
         float lon = 21.785f;
         float epsilon = 0.00000001f;
         String s = "{\"pseudo\":\"" + alfred.getPseudo() + "\",\"latitude\":" + lat + ", \"longitude\":" + lon + "}";
         Response response = target("user/v1/update-coordinates").request().post(Entity.json(s));
         assertTrue(response.getStatus() < 300);
-        response = target("user/v1/"+alfred.getPseudo()).request().get();
-        assertTrue(response.getStatus() < 300);
-        User u = gson.fromJson(response.readEntity(String.class),User.class);
+
+        User u = userService.getUser(alfred.getPseudo());
         assertEquals(alfred,u);
         assertTrue(Math.abs(u.getLatitude() - lat) < epsilon);
         assertTrue(Math.abs(u.getLongitude() - lon) < epsilon);
