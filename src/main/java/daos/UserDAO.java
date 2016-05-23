@@ -80,12 +80,13 @@ public class UserDAO extends DAO {
      * Updates one {@link User} in database
      * @param user the {@link User} to update
      */
-    public void replaceOne(User user) throws NotFoundException{
+    public User replaceOne(User user) throws NotFoundException{
         Document formerDoc = coll.find(eq("pseudo",user.getPseudo())).first();
         if(formerDoc == null)
             throw new NotFoundException("User not found");
         Document newDoc =  new Document(Document.parse(gson.toJson(user)));
         coll.replaceOne(formerDoc,newDoc);
+        return user;
     }
 
     public void deleteOne(String pseudo) throws NotFoundException{

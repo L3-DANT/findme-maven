@@ -16,6 +16,9 @@ import security.BCrypt;
 import services.UserService;
 import utils.DatabaseUtils;
 
+import java.util.Arrays;
+
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -120,6 +123,9 @@ public class UserControllerTest extends AbstractControllerTest {
         String s = "{\"pseudo\":\"" + alfred.getPseudo() + "\",\"password\":\"" + alfred.getPassword() + "\",\"friendList\":["+ s3 + "]}";
         Response response = target("user/v1").request().post(Entity.json(s));
         assertTrue(response.getStatus() < 300);
+        String[] expected = {u.getPseudo(),u2.getPseudo()};
+        User ret = gson.fromJson(response.readEntity(String.class),User.class);
+        assertEquals(alfred,ret);
 
         //make sure friends have been removed from the two users
         alfredcopy = userService.getUser(alfred.getPseudo());

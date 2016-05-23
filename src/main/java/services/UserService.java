@@ -58,13 +58,18 @@ public class UserService {
      * Updates an user
      * @param user the user to update
      */
-    public List<String> updateUser(User user) throws NotFoundException{
+    public String[] updateUser(User user) throws NotFoundException{
         User userDB = dao.findOneByPseudo(user.getPseudo());
+
+        //copy of userDB used in the loop to avoid concurrent access to userDB.friendList
         User insert = new User(userDB.getPseudo(),userDB.getPassword(),userDB.getLatitude(),userDB.getLongitude(),userDB.getPhoneNumber());
-        for (User usr : userDB.getFriendList()) {
-            insert.addFriend(new User(usr.getPseudo(),userDB.getLatitude(),userDB.getLongitude(),userDB.getPhoneNumber()));
+
+        //check for eventual password change
+        if(user.getPassword() != null && !BCrypt.checkpw(user.getPassword(),insert.getPassword())){
+            insert.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
         }
-        List<String> ret = null;
+
+        String[] ret = null;
 
         if(user.getLatitude() != 0)
             insert.setLatitude(user.getLatitude());
@@ -77,22 +82,22 @@ public class UserService {
         List<User> listUser = user.getFriendList();
         List<User> listUserDB = userDB.getFriendList();
         if(listUser != null && listUser.size() < listUserDB.size()) {
-            ret = new ArrayList<String>();
+            ret = new String[listUserDB.size() - listUser.size()];
+            int i = 0;
             for (User iter : listUserDB) {
+                User tmp = dao.findOneByPseudo(iter.getPseudo());
                 if(!listUser.contains(iter)) {
-                    User tmp = dao.findOneByPseudo(iter.getPseudo());
                     tmp.removeFriend(insert);
                     dao.replaceOne(tmp);
-                    ret.add(tmp.getPseudo());
-                    insert.removeFriend(new User(iter.getPseudo()));
+                    ret[i++] = tmp.getPseudo();
+                } else {
+                    tmp.setPassword(null);
+                    tmp.clearFriendList();
+                    insert.addFriend(tmp);
                 }
             }
         }
 
-        //check for eventual password change
-        if(user.getPassword() != null && !BCrypt.checkpw(user.getPassword(),insert.getPassword())){
-            insert.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
-        }
         dao.replaceOne(insert);
         return ret;
     }
@@ -108,6 +113,10 @@ public class UserService {
         User friend1 = dao.findOneByPseudo(pseudo1);
         User friend2 = dao.findOneByPseudo(pseudo2);
 
+
+        //Clearing passwords
+        friend1.setPassword(null);
+        friend2.setPassword(null);
         // Clearing friendList
         friend1.clearFriendList();
         friend2.clearFriendList();

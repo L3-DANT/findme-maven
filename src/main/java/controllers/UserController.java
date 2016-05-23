@@ -64,7 +64,7 @@ public class UserController extends Controller{
     public String updateUser(String u){
         try {
             User user = gson.fromJson(u,User.class);
-            List<String> list = userService.updateUser(user);
+            String[] array = userService.updateUser(user);
             return u;
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
