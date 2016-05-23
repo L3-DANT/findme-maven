@@ -50,17 +50,17 @@ public class FriendRequestService {
     }
 
     public String findByCaller(String pseudo) {
-        return serializeList(dao.findByField("caller",pseudo),0);
+        return serializeList(dao.findByField("caller",pseudo),true);
     }
 
     public String findByReceiver(String pseudo) {
-        return serializeList(dao.findByField("receiver",pseudo),1);
+        return serializeList(dao.findByField("receiver",pseudo),false);
     }
 
-    private String serializeList(List<FriendRequest> list, int from) {
+    private String serializeList(List<FriendRequest> list, boolean from) {
         String data = "";
         int i = 0;
-        if(from == 0){
+        if(from){
             for(FriendRequest fr : list){
                 if(++i == list.size())
                     data += "\""+fr.getReceiver()+"\"";

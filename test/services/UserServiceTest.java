@@ -1,7 +1,6 @@
 package services;
 
 import static org.junit.Assert.*;
-//import static org.powermock.api.mockito.PowerMockito.*;
 import static org.mockito.Mockito.*;
 
 import daos.UserDAO;
@@ -9,32 +8,25 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import models.User;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import security.BCrypt;
-
 import java.util.Arrays;
-import java.util.List;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({UserService.class})
-//@PowerMockIgnore( {"javax.management.*"})
 public class UserServiceTest {
 
     private UserDAO userDAO;
     private UserService userService;
-    private User test;
-
 
     @Before
     public void setUp() throws Exception {
         PowerMockito.whenNew(UserDAO.class).withNoArguments().thenReturn(PowerMockito.mock(UserDAO.class));
         userDAO = new UserDAO();
         userService = new UserService();
-        test = new User();
     }
 
     @Test

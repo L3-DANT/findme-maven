@@ -7,7 +7,7 @@ import com.mongodb.client.MongoDatabase;
 import javax.inject.Singleton;
 
 /**
- * Singleton giving an access to a Mongo database
+ * Singleton giving access to a Mongo database
  */
 public class MongoConnection {
 

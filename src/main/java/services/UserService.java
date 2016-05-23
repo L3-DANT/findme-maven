@@ -69,7 +69,8 @@ public class UserService {
             insert.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
         }
 
-        String[] ret = null;
+        List<String> ret = null;
+
 
         if(user.getLatitude() != 0)
             insert.setLatitude(user.getLatitude());
@@ -82,14 +83,14 @@ public class UserService {
         List<User> listUser = user.getFriendList();
         List<User> listUserDB = userDB.getFriendList();
         if(listUser != null && listUser.size() < listUserDB.size()) {
-            ret = new String[listUserDB.size() - listUser.size()];
+            ret = new ArrayList<String>();
             int i = 0;
             for (User iter : listUserDB) {
                 User tmp = dao.findOneByPseudo(iter.getPseudo());
                 if(!listUser.contains(iter)) {
                     tmp.removeFriend(insert);
                     dao.replaceOne(tmp);
-                    ret[i++] = tmp.getPseudo();
+                    ret.add(tmp.getPseudo());
                 } else {
                     tmp.setPassword(null);
                     tmp.clearFriendList();
@@ -99,7 +100,7 @@ public class UserService {
         }
 
         dao.replaceOne(insert);
-        return ret;
+        return ret.size() == 0 ? null : ret.toArray(new String[ret.size()]);
     }
 
     /**
