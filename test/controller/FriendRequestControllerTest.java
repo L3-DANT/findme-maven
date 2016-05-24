@@ -29,11 +29,14 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
     private FriendRequest fr2 = new FriendRequest("Alfred","John");
     private FriendRequest fr3 = new FriendRequest("John","Bob");
 
-    private UserService userService = new UserService();
-    private FriendRequestService frService = new FriendRequestService();
+    private UserService userService;
+    private FriendRequestService frService;
 
     @Before
     public void insertBefore(){
+
+        userService = new UserService();
+        frService = new FriendRequestService();
         DatabaseUtils.initialiseCollection("user", alfred,bob,john,meuporg);
         DatabaseUtils.initialiseCollection("friendrequest",fr,fr2,fr3);
     }

@@ -92,4 +92,8 @@ public class DatabaseUtils {
             map.remove(name);
         }
     }
+
+    public static MongoCollection<Document> getColl(String name) {
+        return map.get(name);
+    }
 }

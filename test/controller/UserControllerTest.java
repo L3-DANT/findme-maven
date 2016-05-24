@@ -6,6 +6,7 @@ import models.User;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
@@ -29,10 +30,10 @@ public class UserControllerTest extends AbstractControllerTest {
     private User u2 = new User("John","123");
     private User u3 = new User("Fred","123");
 
-    private UserService userService = new UserService();
+    private UserService userService;
 
     @Before
-    public void insertBefore() {
+    public void insertBefore(){
         User ucopy = new User("Bob","123");
         User u2copy = new User("John","123");
         User u3copy = new User("Fred","123");
@@ -44,6 +45,8 @@ public class UserControllerTest extends AbstractControllerTest {
         alfred.addFriend(u3copy);
 
 
+
+        userService = new UserService();
         DatabaseUtils.initialiseCollection("user", alfred,u,u2,u3);
     }
 

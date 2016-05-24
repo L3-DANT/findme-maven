@@ -49,14 +49,14 @@ public class FriendRequestController extends Controller{
             } catch(NotFoundException e) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
-            return frService.findByReceiver(receiver);
+            return gson.toJson(frService.findByReceiver(receiver));
         } else {
             try {
                 userService.getUser(caller);
             } catch (NotFoundException e) {
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
-            return frService.findByCaller(caller);
+            return gson.toJson(frService.findByCaller(caller));
         }
 
     }

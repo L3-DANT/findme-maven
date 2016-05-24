@@ -12,6 +12,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -79,8 +80,11 @@ public class FriendRequestServiceTest {
         list.add(fr2);
         list.add(fr3);
         when(frDAO.findByField(anyString(),anyString())).thenReturn(list);
-        String s = "[\"b\",\"c\",\"d\"]";
-        assertEquals(frService.findByCaller("a"),s);
+        String[] expected = {"b","c","d"};
+        String[] result = frService.findByCaller("a");
+        Arrays.sort(expected);
+        Arrays.sort(result);
+        assertArrayEquals(result,expected);
         verify(frDAO,times(1)).findByField("caller","a");
     }
 
@@ -94,8 +98,11 @@ public class FriendRequestServiceTest {
         list.add(fr2);
         list.add(fr3);
         when(frDAO.findByField(anyString(),anyString())).thenReturn(list);
-        String s = "[\"1\",\"2\",\"3\"]";
-        assertEquals(frService.findByReceiver("a"),s);
+        String[] expected = {"1","2","3"};
+        String[] result = frService.findByReceiver("a");
+        Arrays.sort(expected);
+        Arrays.sort(result);
+        assertArrayEquals(result,expected);
         verify(frDAO,times(1)).findByField("receiver","a");
     }
 

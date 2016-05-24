@@ -12,7 +12,7 @@ import javax.inject.Singleton;
 public class MongoConnection {
 
     public static MongoDatabase getDb(){
-       return MongoInitializer.db;
+		return MongoInitializer.db;
     }
 
 	private MongoConnection() {}

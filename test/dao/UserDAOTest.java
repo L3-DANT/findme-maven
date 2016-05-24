@@ -1,24 +1,34 @@
 package dao;
 
 
+import com.google.gson.Gson;
 import daos.UserDAO;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.User;
+import org.bson.Document;
 import org.junit.*;
 import utils.DatabaseUtils;
 
+import static com.mongodb.client.model.Filters.eq;
 import static org.junit.Assert.*;
 
 
 public class UserDAOTest extends AbstractDAOTest {
 
-    private UserDAO dao = new UserDAO();
+    private UserDAO dao;
     private User alfred = new User("Alfred","123");
+
+    private User getDBUser(String pseudo) {
+        Document doc = DatabaseUtils.getColl("user").find(eq("pseudo",pseudo)).first();
+        return doc == null ? null : new Gson().fromJson(doc.toJson(),User.class);
+    }
 
     @Before
     public void insertBefore(){
+        dao = new UserDAO();
         DatabaseUtils.initialiseCollection("user", alfred);
+
     }
 
     @After
@@ -41,24 +51,24 @@ public class UserDAOTest extends AbstractDAOTest {
     }
 
     @Test
-    public void testInsertSuccess() throws DuplicateDataException, NotFoundException {
+    public void insertOneSuccess() throws DuplicateDataException {
         User u = dao.insertOne(new User("Jean-Georges","123"));
-        assertEquals(dao.findOneByPseudo(u.getPseudo()),u);
+        assertEquals(getDBUser(u.getPseudo()),u);
     }
 
     @Test(expected = DuplicateDataException.class)
-    public void testInsertDuplicateException() throws DuplicateDataException {
+    public void insertOneDuplicateException() throws DuplicateDataException {
         dao.insertOne(alfred);
     }
 
     @Test
     public void replaceOneSuccess() throws NotFoundException{
         User u = new User("Alfred","456");
-        User test = dao.findOneByPseudo(u.getPseudo());
+        User test = getDBUser(u.getPseudo());
         assertNotEquals(u.getPassword(),test.getPassword());
 
         dao.replaceOne(u);
-        test = dao.findOneByPseudo(u.getPseudo());
+        test = getDBUser(u.getPseudo());
         assertEquals(test,u);
         assertEquals(u.getPassword(),test.getPassword());
     }
@@ -69,10 +79,10 @@ public class UserDAOTest extends AbstractDAOTest {
         dao.replaceOne(u);
     }
 
-    @Test(expected = NotFoundException.class)
+    @Test
     public void deleteOneSuccess() throws NotFoundException {
         dao.deleteOne("Alfred");
-        dao.findOneByPseudo("Alfred");
+        assertNull(getDBUser("Alfred"));
     }
 
     @Test(expected = NotFoundException.class)

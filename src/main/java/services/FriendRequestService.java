@@ -49,33 +49,27 @@ public class FriendRequestService {
         dao.deleteOne(fr);
     }
 
-    public String findByCaller(String pseudo) {
-        return serializeList(dao.findByField("caller",pseudo),true);
+    public String[] findByCaller(String pseudo) {
+        return asArray(dao.findByField("caller",pseudo),false);
     }
 
-    public String findByReceiver(String pseudo) {
-        return serializeList(dao.findByField("receiver",pseudo),false);
+    public String[] findByReceiver(String pseudo) {
+        return asArray(dao.findByField("receiver",pseudo),true);
     }
 
-    private String serializeList(List<FriendRequest> list, boolean from) {
-        String data = "";
+    private String[] asArray(List<FriendRequest> list, boolean from) {
+        String[] ret = new String[list.size()];
         int i = 0;
         if(from){
             for(FriendRequest fr : list){
-                if(++i == list.size())
-                    data += "\""+fr.getReceiver()+"\"";
-                else
-                    data += "\""+fr.getReceiver()+"\",";
+                ret[i++] = fr.getCaller();
             }
         } else {
             for(FriendRequest fr : list){
-                if(++i == list.size())
-                    data += "\""+fr.getCaller()+"\"";
-                else
-                    data += "\""+fr.getCaller()+"\",";
+                ret[i++] = fr.getReceiver();
             }
         }
-        return "["+data+"]";
+        return ret;
     }
 
 
