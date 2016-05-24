@@ -6,7 +6,6 @@ import models.FriendRequest;
 import models.User;
 import services.FriendRequestService;
 import services.UserService;
-import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 

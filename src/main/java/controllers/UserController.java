@@ -7,7 +7,6 @@ import exceptions.NotFoundException;
 import exceptions.UnauthorisedException;
 import models.User;
 import services.UserService;
-import javax.enterprise.context.RequestScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;

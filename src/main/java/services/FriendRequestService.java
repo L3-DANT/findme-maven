@@ -6,8 +6,6 @@ import exceptions.NotFoundException;
 import models.FriendRequest;
 
 import javax.ejb.Singleton;
-import javax.inject.Inject;
-import javax.ws.rs.core.Context;
 import java.util.ArrayList;
 import java.util.List;
 
