@@ -46,6 +46,10 @@ public class UserDAO extends DAO {
         return list;
     }
 
+    public void clearCollection(){
+        coll.drop();
+    }
+
 
     /**
      * Finds one {@link User} in database
@@ -58,6 +62,7 @@ public class UserDAO extends DAO {
         if(doc == null)
             throw new NotFoundException("User not found");
         User user = gson.fromJson(doc.toJson(),User.class);
+        user.setPassword(doc.get("password").toString());
         return user;
     }
 
