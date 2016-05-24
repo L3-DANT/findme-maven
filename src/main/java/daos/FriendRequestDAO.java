@@ -44,8 +44,8 @@ public class FriendRequestDAO extends DAO{
     /**
      * Inserts a friend request in the database
      * @param fr the friend request to insert
-     * @return false if FriendRequest already exists in database, true otherwise
-     * @throws MongoException if the friend request already exists
+     * @return the just inserted {@link FriendRequest}
+     * @throws DuplicateDataException if the friend request already exists
      */
     public FriendRequest insertOne(FriendRequest fr) throws DuplicateDataException{
 
@@ -76,10 +76,10 @@ public class FriendRequestDAO extends DAO{
         return fr;
     }
 
-
     /**
      * Removes a {@link FriendRequest} from the database
      * @param fr the {@link FriendRequest} to remove
+     * @throws NotFoundException if the {@link FriendRequest} is not found in the database
      */
     public void deleteOne(FriendRequest fr) throws NotFoundException{
         int i = 0;
@@ -92,6 +92,12 @@ public class FriendRequestDAO extends DAO{
             throw new NotFoundException("Friend request not found");
     }
 
+    /**
+     * Finds all the {@link FriendRequest} that matches the parameters
+     * @param field the name of the field to find
+     * @param pseudo the value of the field
+     * @return a {@link List} of {@link FriendRequest}
+     */
     public List<FriendRequest> findByField(String field, String pseudo){
         List<FriendRequest> list = new ArrayList<FriendRequest>();
         MongoCursor<Document> cursor = coll.find(eq(field,pseudo)).iterator();

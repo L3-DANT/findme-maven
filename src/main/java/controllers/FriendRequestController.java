@@ -1,26 +1,18 @@
 package controllers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mongodb.MongoException;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import models.User;
 import services.FriendRequestService;
 import services.UserService;
-
 import javax.enterprise.context.RequestScoped;
-import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-
-import java.util.List;
 
 /**
  *  Controller that manages {@link FriendRequest}
  */
-@RequestScoped
 @Path("/friendrequest")
 @Produces("application/json")
 public class FriendRequestController extends Controller{
@@ -30,10 +22,10 @@ public class FriendRequestController extends Controller{
     private UserService userService = new UserService();
 
     /**
-     * Gets a {@link FriendRequest}
      * @param caller the user that asked or received the {@link FriendRequest}
      * @param receiver the user that asked or received the {@link FriendRequest}
-     * @return the {@link FriendRequest} or false if not found
+     * @return the {@link FriendRequest} if two parameters are given, or a list of pseudos depending on which parameter has been given
+     * @throws WebApplicationException 404 is the {@link FriendRequest} can't be found or if the given pseudo is not related to a {@link User#pseudo} in Database
      */
     @Path("/v1")
     @GET
@@ -66,17 +58,17 @@ public class FriendRequestController extends Controller{
     /**
      * Creates a {@link FriendRequest} related to two users
      * @param fr the parsed json
-     * @return true if the user's created, or false if it already exists
+     * @throws WebApplicationException 404 if at least one of the users in the {@link FriendRequest} doesn't exist in database
+     * @throws WebApplicationException 409 if the {@link FriendRequest} already exists
      */
     @Path("/v1")
     @PUT
     @Consumes("application/json")
-    public String createFriendRequest(FriendRequest fr) {
+    public void createFriendRequest(FriendRequest fr) {
         try {
             userService.getUser(fr.getCaller());
             userService.getUser(fr.getReceiver());
             frService.insertFriendRequest(fr);
-            return null;
         } catch(NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch(DuplicateDataException e){
@@ -89,16 +81,15 @@ public class FriendRequestController extends Controller{
      * Accepts a {@link FriendRequest}, which means removing it from database and
      * adding the first {@link User} in the second's {@link User#friendList} and reversely
      * @param fr the parsed json
-     * @return true if everything went ok, false if at least one of the users were not found
+     * @throws WebApplicationException 404 if the {@link FriendRequest} can't be found
      */
     @Path("/v1")
     @POST
     @Consumes("application/json")
-    public String acceptFriendRequest(FriendRequest fr) {
+    public void acceptFriendRequest(FriendRequest fr) {
         try {
             userService.addFriend(fr.getCaller(), fr.getReceiver());
             frService.deleteOne(fr);
-            return null;
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -108,6 +99,7 @@ public class FriendRequestController extends Controller{
      * Declines a {@link FriendRequest}, which means removing it from database
      * @param caller the caller (or receiver)
      * @param receiver the receiver (or caller)
+     * @throws WebApplicationException 404 if the {@link FriendRequest} can't be found
      */
     @Path("/v1")
     @DELETE

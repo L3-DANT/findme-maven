@@ -58,18 +58,18 @@ public class FriendRequestService {
     }
 
     private String[] asArray(List<FriendRequest> list, boolean from) {
-        String[] ret = new String[list.size()];
+        String[] arrayPseudos = new String[list.size()];
         int i = 0;
         if(from){
             for(FriendRequest fr : list){
-                ret[i++] = fr.getCaller();
+                arrayPseudos[i++] = fr.getCaller();
             }
         } else {
             for(FriendRequest fr : list){
-                ret[i++] = fr.getReceiver();
+                arrayPseudos[i++] = fr.getReceiver();
             }
         }
-        return ret;
+        return arrayPseudos;
     }
 
 

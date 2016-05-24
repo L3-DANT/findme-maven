@@ -4,8 +4,6 @@ package connections;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
-import javax.inject.Singleton;
-
 /**
  * Singleton giving access to a Mongo database
  */

@@ -20,6 +20,7 @@ import java.util.List;
 public class UserService {
 
     private UserDAO dao = new UserDAO();
+    private final int saltSize = 12;
 
     /**
      * Finds all users
@@ -32,12 +33,12 @@ public class UserService {
     public List<User> insertTest(){
         dao.clearCollection();
         List<User> list = new ArrayList<User>();
-        list.add(new User("Antoine",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84927f,2.35268f,"0650555075"));
-        list.add(new User("François",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84862f,2.36071f,"06 60 76 99 44"));
-        list.add(new User("Maxime",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84723f,2.35835f,"+33667479299"));
-        list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84461f,2.35221f,"+33 6 02 24 17 93"));
-        list.add(new User("Adrien",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84427f,2.35865f,null));
-        list.add(new User("Olivier",BCrypt.hashpw("123", (BCrypt.gensalt(12))), 48.84138f,2.35972f,null));
+        list.add(new User("Antoine",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84927f,2.35268f,"0650555075"));
+        list.add(new User("François",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84862f,2.36071f,"06 60 76 99 44"));
+        list.add(new User("Maxime",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84723f,2.35835f,"+33667479299"));
+        list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84461f,2.35221f,"+33 6 02 24 17 93"));
+        list.add(new User("Adrien",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84427f,2.35865f,null));
+        list.add(new User("Olivier",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84138f,2.35972f,null));
         for (User user : list) {
             try {
                 dao.insertOne(user);
@@ -50,7 +51,7 @@ public class UserService {
 
     public User insertUser(User user) throws DuplicateDataException {
         if(user.getPassword() != null){
-            user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
+            user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(saltSize))));
         }
         return dao.insertOne(user);
     }
@@ -79,7 +80,7 @@ public class UserService {
 
         //check for eventual password change
         if(user.getPassword() != null && !BCrypt.checkpw(user.getPassword(),insert.getPassword())){
-            insert.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(12))));
+            insert.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(saltSize))));
         }
 
         List<String> ret = null;
@@ -171,10 +172,10 @@ public class UserService {
     }
 
     public void updateCoordinates(User user) throws NotFoundException {
-        User u = dao.findOneByPseudo(user.getPseudo());
-        u.setLongitude(user.getLongitude());
-        u.setLatitude(user.getLatitude());
-        dao.replaceOne(u);
+        User userDB = dao.findOneByPseudo(user.getPseudo());
+        userDB.setLongitude(user.getLongitude());
+        userDB.setLatitude(user.getLatitude());
+        dao.replaceOne(userDB);
     }
 
 }

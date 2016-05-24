@@ -27,7 +27,6 @@ public class UserDAO extends DAO {
     }
 
     /**
-     *
      * Gets all users from database
      * @return list of {@link User}
      */
@@ -49,7 +48,7 @@ public class UserDAO extends DAO {
      * Finds one {@link User} in database
      * @param pseudo the {@link User#pseudo}
      * @return the {@link User}
-     * @throws NotFoundException
+     * @throws NotFoundException if the {@link User} can't be found
      */
     public User findOneByPseudo(String pseudo) throws NotFoundException{
         Document doc = coll.find(eq("pseudo",pseudo)).first();
@@ -64,7 +63,8 @@ public class UserDAO extends DAO {
     /**
      * Adds an {@link User} in database
      * @param user the {@link User} to add
-     * @return true if succeded, false if the user already exists
+     * @return the just inserted {@link User}
+     * @throws DuplicateDataException if the {@link User} already exists in database
      */
     public User insertOne(User user) throws DuplicateDataException {
         Document doc = new Document(Document.parse(gson.toJson(user)));
