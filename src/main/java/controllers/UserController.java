@@ -1,7 +1,12 @@
 package controllers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.pusher.rest.Pusher;
+import connections.PusherConnection;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
+import exceptions.UnauthorisedException;
 import models.User;
 import services.UserService;
 
@@ -23,6 +28,7 @@ import java.util.Map;
 @Produces("application/json")
 public class UserController extends Controller{
 
+    private Pusher pusher = PusherConnection.getPusher();
     private UserService userService = new UserService();
 
     /**
@@ -65,9 +71,14 @@ public class UserController extends Controller{
         try {
             User user = gson.fromJson(u,User.class);
             String[] array = userService.updateUser(user);
+            if(array != null){
+                pusher.trigger("private-"+user.getPseudo(),"friends-removed",array);
+            }
             return u;
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
+        } catch (UnauthorisedException e){
+            throw new WebApplicationException("If you want to add friends, please proceed by calling friendrequest urls.",Response.Status.BAD_REQUEST);
         }
     }
 
@@ -99,6 +110,8 @@ public class UserController extends Controller{
         try {
             User user = gson.fromJson(u,User.class);
             userService.updateCoordinates(user);
+            user.clearFriendList();
+            pusher.trigger("private-"+user.getPseudo(),"position-updated",gson.toJson(user));
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -127,12 +140,6 @@ public class UserController extends Controller{
     @GET
     public String insertTest(){
         return gson.toJson(userService.insertTest());
-    }
-
-    @Path("testpusher")
-    @GET
-    public void testPusher(){
-        pusher.trigger("a","o","i");
     }
 
 }

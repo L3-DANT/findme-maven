@@ -10,7 +10,6 @@ import connections.PusherConnection;
  */
 public abstract class Controller {
 
-    protected Pusher pusher = PusherConnection.getPusher();
     protected Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
 }

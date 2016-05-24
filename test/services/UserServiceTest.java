@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import daos.UserDAO;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
+import exceptions.UnauthorisedException;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import models.User;
@@ -49,7 +50,7 @@ public class UserServiceTest {
 
 
     @Test
-    public void updateUserSuccess() throws Exception {
+    public void updateUserWithSmallerFriendListDifferentPassword() throws Exception {
         User user = new User("Bob", BCrypt.hashpw("123", (BCrypt.gensalt(12))));
         User usercopy = new User("Bob","abc");
         User mock = PowerMockito.mock(User.class);
@@ -82,14 +83,57 @@ public class UserServiceTest {
 
         //make sure password has been changed
         verify(mock, times(1)).setPassword(anyString());
-        //make sure the use has one friend
+        //make sure the user has one friend
         verify(mock,times(1)).addFriend(any(User.class));
         verify(userDAO,times(4)).findOneByPseudo(anyString());
         verify(userDAO,times(3)).replaceOne(any(User.class));
+
+
     }
 
+    @Test
+    public void updateUserWithSameFriendListSamePassword() throws Exception {
+        User user = new User("Bob", "123");
+        User mock = PowerMockito.mock(User.class);
+        when(userDAO.findOneByPseudo(anyString())).thenReturn(user);
+        when(mock.getPseudo()).thenReturn(user.getPseudo());
+        when(mock.getPassword()).thenReturn(BCrypt.hashpw("123", (BCrypt.gensalt(12))));
+        when(mock.getLatitude()).thenReturn(user.getLatitude());
+        when(mock.getLongitude()).thenReturn(user.getLongitude());
+        when(mock.getFriendList()).thenReturn(user.getFriendList());
+        when(mock.getPhoneNumber()).thenReturn(user.getPhoneNumber());
+        PowerMockito.whenNew(User.class).withArguments(anyString(),anyString(),anyFloat(),anyFloat(),anyString()).thenReturn(mock);
+
+        String [] result = userService.updateUser(user);
+        assertNull(result);
+        verify(mock, times(0)).setPassword(anyString());
+        verify(mock,times(0)).addFriend(any(User.class));
+        verify(userDAO,times(1)).findOneByPseudo(anyString());
+        verify(userDAO,times(1)).replaceOne(any(User.class));
+    }
+
+    @Test(expected = UnauthorisedException.class)
+    public void updateUserWithBiggerFriendListUnauthorisedException() throws NotFoundException, UnauthorisedException {
+        User user = new User("Bob", "123");
+        User usercopy = new User("Bob","123");
+        usercopy.addFriend(new User("John"));
+        when(userDAO.findOneByPseudo(anyString())).thenReturn(user);
+        userService.updateUser(usercopy);
+    }
+
+    @Test(expected = UnauthorisedException.class)
+    public void updateUserWithDifferentFriendListUnauthorisedException() throws NotFoundException, UnauthorisedException {
+        User user = new User("Bob", "123");
+        user.addFriend(new User("John"));
+        User usercopy = new User("Bob","123");
+        usercopy.addFriend(new User("Fred"));
+        when(userDAO.findOneByPseudo(anyString())).thenReturn(user);
+        userService.updateUser(usercopy);
+    }
+
+
     @Test(expected = NotFoundException.class)
-    public void updateNotFoundException() throws NotFoundException {
+    public void updateUserNotFoundException() throws NotFoundException, UnauthorisedException {
         doThrow(new NotFoundException("User not found")).when(userDAO).findOneByPseudo(anyString());
         userService.updateUser(new User("John"));
     }

@@ -3,6 +3,7 @@ package services;
 import daos.UserDAO;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
+import exceptions.UnauthorisedException;
 import models.User;
 import security.BCrypt;
 
@@ -58,8 +59,20 @@ public class UserService {
      * Updates an user
      * @param user the user to update
      */
-    public String[] updateUser(User user) throws NotFoundException{
+    public String[] updateUser(User user) throws NotFoundException, UnauthorisedException {
         User userDB = dao.findOneByPseudo(user.getPseudo());
+        List<User> listUser = user.getFriendList();
+        List<User> listUserDB = userDB.getFriendList();
+        if(listUser != null && listUser.size() > listUserDB.size()){
+            throw new UnauthorisedException();
+        } else if(listUser.size() == listUserDB.size()){
+            int i = 0;
+            for (User u : listUser) {
+                if(!listUserDB.contains(u)){
+                    throw new UnauthorisedException();
+                }
+            }
+        }
 
         //copy of userDB used in the loop to avoid concurrent access to userDB.friendList
         User insert = new User(userDB.getPseudo(),userDB.getPassword(),userDB.getLatitude(),userDB.getLongitude(),userDB.getPhoneNumber());
@@ -80,11 +93,8 @@ public class UserService {
             insert.setPhoneNumber(user.getPhoneNumber());
 
         //check for eventual removal of friends
-        List<User> listUser = user.getFriendList();
-        List<User> listUserDB = userDB.getFriendList();
         if(listUser != null && listUser.size() < listUserDB.size()) {
             ret = new ArrayList<String>();
-            int i = 0;
             for (User iter : listUserDB) {
                 User tmp = dao.findOneByPseudo(iter.getPseudo());
                 if(!listUser.contains(iter)) {
@@ -100,7 +110,7 @@ public class UserService {
         }
 
         dao.replaceOne(insert);
-        return ret.size() == 0 ? null : ret.toArray(new String[ret.size()]);
+        return ret == null  ? null : ret.toArray(new String[ret.size()]);
     }
 
     /**
