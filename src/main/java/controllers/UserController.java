@@ -111,7 +111,7 @@ public class UserController extends Controller{
             User user = gson.fromJson(u,User.class);
             userService.updateCoordinates(user);
             user.clearFriendList();
-            pusher.trigger("private-"+user.getPseudo(),"position-updated",gson.toJson(user));
+            pusher.trigger("private-"+user.getPseudo(),"position-updated",user);
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
