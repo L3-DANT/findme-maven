@@ -103,14 +103,13 @@ public class FriendRequestController extends Controller{
      */
     @Path("/v1")
     @DELETE
-    public String declineFriendRequest(@QueryParam("caller") String caller,
+    public void declineFriendRequest(@QueryParam("caller") String caller,
                                        @QueryParam("receiver") String receiver) {
         if(caller == null || receiver == null){
             throw new WebApplicationException(Response.Status.BAD_REQUEST);
         }
         try {
             frService.deleteOne(new FriendRequest(caller,receiver));
-            return null;
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }

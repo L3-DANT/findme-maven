@@ -78,7 +78,9 @@ public class UserDAO extends DAO {
 
     /**
      * Updates one {@link User} in database
-     * @param user the {@link User} to update
+     * @param user the {@link User} to replace
+     * @return the just replaced {@link User}
+     * @throws NotFoundException if the {@link User} can't be found in database
      */
     public User replaceOne(User user) throws NotFoundException{
         Document formerDoc = coll.find(eq("pseudo",user.getPseudo())).first();
@@ -89,6 +91,11 @@ public class UserDAO extends DAO {
         return user;
     }
 
+    /**
+     * Removes a {@link User} from database
+     * @param pseudo the {@link User} to remove
+     * @throws NotFoundException if the {@link User} can't be found in database
+     */
     public void deleteOne(String pseudo) throws NotFoundException{
         if(coll.deleteOne(new Document("pseudo", pseudo)).getDeletedCount() < 1)
             throw new NotFoundException("User not found");

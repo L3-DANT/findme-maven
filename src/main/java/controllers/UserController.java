@@ -60,11 +60,16 @@ public class UserController extends Controller{
 
     /**
      * Updates given {@link User} in database
+     * If friends are removed, sends a "friends-removed" event on {@link Pusher}
+     * Note that this method is a bit heavy and should be used only for the {@link User}'s profile changes.
+     * If you want to update the coordinates of the {@link User}, please refer to the {@link UserController#updateCoordinates(String)} method.
+     * Not that calling the {@link UserController#updateUser(String)} method won't trigger the "position-updated" event on {@link Pusher}
      * @param userAsString the {@link User} to update
      * @return the serialized {@link User}
      * @throws WebApplicationException 404 if the {@link User} can't be found
      * @throws WebApplicationException 400 if the given {@link User} has a bigger {@link User#friendList}, or a same sized one with different friends
      * To manage friends, please use {@link FriendRequestController}
+     * @see Pusher
      */
     @Path("v1")
     @POST
@@ -109,8 +114,10 @@ public class UserController extends Controller{
 
     /**
      * Lighter version of POST method, only updating the {@link User} {@link User#latitude} and {@link User#longitude}
+     * Triggers a "position-updated" event on {@link Pusher}
      * @param userAsString the {@link User} to update
-     * @throws NotFoundException if the {@link User} can't be found in database
+     * @throws WebApplicationException 404 if the {@link User} can't be found in database
+     * @see Pusher
      */
     @Path("v1/update-coordinates")
     @POST

@@ -1,4 +1,4 @@
-package controller;
+package controllerTest;
 
 import controllers.UserController;
 import exceptions.NotFoundException;
@@ -6,7 +6,6 @@ import models.User;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
@@ -16,8 +15,6 @@ import javax.ws.rs.core.Response;
 import security.BCrypt;
 import services.UserService;
 import utils.DatabaseUtils;
-
-import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;

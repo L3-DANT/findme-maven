@@ -22,14 +22,6 @@ public class UserService {
     private UserDAO dao = new UserDAO();
     private final int saltSize = 12;
 
-    /**
-     * Finds all users
-     * @return List of every {@link User}
-     */
-    public List<User> findAll() {
-        return dao.findAll();
-    }
-
     public List<User> insertTest(){
         dao.clearCollection();
         List<User> list = new ArrayList<User>();
@@ -49,6 +41,14 @@ public class UserService {
         return dao.findAll();
     }
 
+    /**
+     * Inserts a {@link User} in database
+     * Uses {@link BCrypt} to hash password
+     * @param user the {@link User} to insert
+     * @return the {@link User} just inserted
+     * @throws DuplicateDataException if the user already exists in database
+     * @see BCrypt
+     */
     public User insertUser(User user) throws DuplicateDataException {
         if(user.getPassword() != null){
             user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(saltSize))));
@@ -57,8 +57,13 @@ public class UserService {
     }
 
     /**
-     * Updates an user
-     * @param user the user to update
+     * Updates an user. Makes sure that it is not modifying its {@link User#friendList} but by removing friends.
+     * Also checks if the password has changed, and use {@link BCrypt} to hash it.
+     * @param user the {@link User} to update
+     * @return an array of {@code String} representing the {@link User#pseudo} of every friend removed, null if none was removed
+     * @throws NotFoundException if the {@link User} can't be found in database
+     * @throws UnauthorisedException if the {@link User#friendList} is not valid
+     * @see BCrypt
      */
     public String[] updateUser(User user) throws NotFoundException, UnauthorisedException {
         User userDB = dao.findOneByPseudo(user.getPseudo());
@@ -67,7 +72,6 @@ public class UserService {
         if(listUser != null && listUser.size() > listUserDB.size()){
             throw new UnauthorisedException();
         } else if(listUser.size() == listUserDB.size()){
-            int i = 0;
             for (User u : listUser) {
                 if(!listUserDB.contains(u)){
                     throw new UnauthorisedException();
@@ -116,9 +120,9 @@ public class UserService {
 
     /**
      * Adds a friend, which means adding a {@link User} with no {@link User#password} and no {@link User#friendList} in one's {@link User#friendList}
-     * @param pseudo1
-     * @param pseudo2
-     * @throws NotFoundException if one of the Users can't be found
+     * @param pseudo1 one of the {@link User#pseudo}
+     * @param pseudo2 the other {@link User#pseudo}
+     * @throws NotFoundException if one of the {@link User} can't be found
      */
     public void addFriend(String pseudo1, String pseudo2) throws NotFoundException{
         // Getting users from DB, clearing password and friendList
@@ -162,15 +166,32 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Make sure the credentials given match a {@link User} in database
+     * @param pseudo the {@link User#pseudo}
+     * @param password the {@link User#password}
+     * @return true if parameters match, false otherwise
+     * @throws NotFoundException if the user can't be found in database
+     */
     public boolean connect(String pseudo, String password) throws NotFoundException{
         User user = dao.findOneByPseudo(pseudo);
         return BCrypt.checkpw(password,user.getPassword());
     }
 
+    /**
+     * Removes a user from database
+     * @param pseudo the {@link User#pseudo}
+     * @throws NotFoundException if the user can't be found in database
+     */
     public void deleteUser(String pseudo) throws NotFoundException {
         dao.deleteOne(pseudo);
     }
 
+    /**
+     * Light version of {@link UserService#updateUser(User)}, only updating the {@link User}'s coordinates
+     * @param user the {@link User} to update
+     * @throws NotFoundException if the user can't be found in database
+     */
     public void updateCoordinates(User user) throws NotFoundException {
         User userDB = dao.findOneByPseudo(user.getPseudo());
         userDB.setLongitude(user.getLongitude());

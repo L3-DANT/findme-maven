@@ -1,15 +1,12 @@
-package dao;
+package daosTest;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
 
-import org.bson.Document;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
 import utils.DatabaseUtils;
-
-import static com.mongodb.client.model.Filters.eq;
 
 public abstract class AbstractDAOTest {
     /**

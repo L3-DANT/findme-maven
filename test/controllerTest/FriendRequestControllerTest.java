@@ -1,4 +1,4 @@
-package controller;
+package controllerTest;
 
 import controllers.FriendRequestController;
 import exceptions.NotFoundException;

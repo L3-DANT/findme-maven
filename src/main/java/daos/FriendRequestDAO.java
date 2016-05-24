@@ -1,20 +1,15 @@
 package daos;
 
-import com.mongodb.MongoException;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.IndexOptions;
-import connections.MongoConnection;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import org.bson.Document;
-
-import static com.mongodb.client.model.Filters.*;
-
 import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.*;
 
 /**
  * DAO class that manages {@link FriendRequest}

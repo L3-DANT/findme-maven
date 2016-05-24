@@ -22,8 +22,9 @@ public class FriendRequestService {
 
     /**
      * Insert a {@link FriendRequest}
-     * @param fr
-     * @return false if FriendRequest already exists
+     * @param fr the {@link FriendRequest} to insert
+     * @return the just inserted {@link FriendRequest}
+     * @throws DuplicateDataException if the {@link FriendRequest} already exists in database
      */
     public FriendRequest insertFriendRequest(FriendRequest fr) throws DuplicateDataException {
         return dao.insertOne(fr);
@@ -32,8 +33,8 @@ public class FriendRequestService {
 
     /**
      * Gets a {@link FriendRequest}
-     * @param pseudo1
-     * @param pseudo2
+     * @param pseudo1 one of the {@link FriendRequest}'s {@link models.User#pseudo}
+     * @param pseudo2 the other {@link FriendRequest}'s {@link models.User#pseudo}
      * @return the {@link FriendRequest}
      * @throws NotFoundException if unable to find the FriendRequest
      */
@@ -43,20 +44,37 @@ public class FriendRequestService {
 
     /**
      * Deletes the {@link FriendRequest}
-     * @param fr
+     * @param fr the {@link FriendRequest} to remove
+     * @throws NotFoundException if the {@link FriendRequest} can't be found in database
      */
     public void deleteOne(FriendRequest fr) throws NotFoundException{
         dao.deleteOne(fr);
     }
 
+    /**
+     * Finds all {@link models.User#pseudo} that one user asked for friendship
+     * @param pseudo the {@link models.User#pseudo}
+     * @return a string list of the {@link models.User#pseudo} found
+     */
     public String[] findByCaller(String pseudo) {
         return asArray(dao.findByField("caller",pseudo),false);
     }
 
+    /**
+     * Finds all {@link models.User#pseudo} that asked for the user for friendship
+     * @param pseudo the {@link models.User#pseudo}
+     * @return a string list of the {@link models.User#pseudo} found
+     */
     public String[] findByReceiver(String pseudo) {
         return asArray(dao.findByField("receiver",pseudo),true);
     }
 
+    /**
+     * Private method used to construct the list for the {@link FriendRequestService#findByCaller(String)} and {@link FriendRequestService#findByReceiver(String)}  methods
+     * @param list the {@code List} of {@link FriendRequest} that matched the condition
+     * @param from true if {@link FriendRequestService#findByCaller(String)} has been called, false if {@link FriendRequestService#findByReceiver(String)} was
+     * @return the list of pseudos exctracted from the {@code List} of {@link FriendRequest}
+     */
     private String[] asArray(List<FriendRequest> list, boolean from) {
         String[] arrayPseudos = new String[list.size()];
         int i = 0;

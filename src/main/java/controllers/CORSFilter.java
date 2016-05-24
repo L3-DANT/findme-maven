@@ -16,9 +16,9 @@ public class CORSFilter implements ContainerResponseFilter {
     /**
      *
      * Filters http requests and set headers on responses
-     * @param requestContext
-     * @param responseContext
-     * @throws IOException
+     * @param requestContext the request context
+     * @param responseContext the response context
+     * @throws IOException if something went wrong
      */
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         final MultivaluedMap<String,Object> headers = responseContext.getHeaders();

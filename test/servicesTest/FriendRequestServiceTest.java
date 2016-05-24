@@ -1,4 +1,4 @@
-package services;
+package servicesTest;
 
 import static org.junit.Assert.*;
 import daos.FriendRequestDAO;
@@ -10,6 +10,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import services.FriendRequestService;
 
 import java.util.ArrayList;
 import java.util.Arrays;

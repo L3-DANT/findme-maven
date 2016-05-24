@@ -1,4 +1,4 @@
-package dao;
+package daosTest;
 
 import com.google.gson.Gson;
 import daos.FriendRequestDAO;
@@ -9,7 +9,6 @@ import org.bson.Document;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.cglib.core.CollectionUtils;
 import utils.DatabaseUtils;
 
 import java.util.ArrayList;
