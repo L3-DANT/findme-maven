@@ -1,7 +1,5 @@
 package daos;
 
-import com.mongodb.Mongo;
-import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.IndexOptions;
@@ -29,7 +27,6 @@ public class UserDAO extends DAO {
     }
 
     /**
-     *
      * Gets all users from database
      * @return list of {@link User}
      */
@@ -51,12 +48,13 @@ public class UserDAO extends DAO {
      * Finds one {@link User} in database
      * @param pseudo the {@link User#pseudo}
      * @return the {@link User}
-     * @throws NotFoundException
+     * @throws NotFoundException if the {@link User} can't be found
      */
     public User findOneByPseudo(String pseudo) throws NotFoundException{
         Document doc = coll.find(eq("pseudo",pseudo)).first();
-        if(doc == null)
+        if(doc == null) {
             throw new NotFoundException("User not found");
+        }
         User user = gson.fromJson(doc.toJson(),User.class);
         return user;
     }
@@ -65,7 +63,8 @@ public class UserDAO extends DAO {
     /**
      * Adds an {@link User} in database
      * @param user the {@link User} to add
-     * @return true if succeded, false if the user already exists
+     * @return the just inserted {@link User}
+     * @throws DuplicateDataException if the {@link User} already exists in database
      */
     public User insertOne(User user) throws DuplicateDataException {
         Document doc = new Document(Document.parse(gson.toJson(user)));
@@ -79,16 +78,24 @@ public class UserDAO extends DAO {
 
     /**
      * Updates one {@link User} in database
-     * @param user the {@link User} to update
+     * @param user the {@link User} to replace
+     * @return the just replaced {@link User}
+     * @throws NotFoundException if the {@link User} can't be found in database
      */
-    public void replaceOne(User user) throws NotFoundException{
+    public User replaceOne(User user) throws NotFoundException{
         Document formerDoc = coll.find(eq("pseudo",user.getPseudo())).first();
         if(formerDoc == null)
             throw new NotFoundException("User not found");
         Document newDoc =  new Document(Document.parse(gson.toJson(user)));
         coll.replaceOne(formerDoc,newDoc);
+        return user;
     }
 
+    /**
+     * Removes a {@link User} from database
+     * @param pseudo the {@link User} to remove
+     * @throws NotFoundException if the {@link User} can't be found in database
+     */
     public void deleteOne(String pseudo) throws NotFoundException{
         if(coll.deleteOne(new Document("pseudo", pseudo)).getDeletedCount() < 1)
             throw new NotFoundException("User not found");

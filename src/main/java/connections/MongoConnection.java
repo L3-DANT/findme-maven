@@ -5,12 +5,12 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 /**
- * Singleton giving an access to a Mongo database
+ * Singleton giving access to a Mongo database
  */
 public class MongoConnection {
 
     public static MongoDatabase getDb(){
-       return MongoInitializer.db;
+		return MongoInitializer.db;
     }
 
 	private MongoConnection() {}

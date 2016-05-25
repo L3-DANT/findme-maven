@@ -2,15 +2,12 @@ package controllers;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.pusher.rest.Pusher;
-import connections.PusherConnection;
 
 /**
- * Abstract class used to factor uses of {@link Pusher}
+ * Abstract class used to factor uses of {@link Gson}
  */
 public abstract class Controller {
 
-    protected Pusher pusher = PusherConnection.getPusher();
     protected Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
 
 }

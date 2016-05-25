@@ -1,20 +1,15 @@
 package daos;
 
-import com.mongodb.MongoException;
-import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
-import com.mongodb.client.model.IndexOptions;
-import connections.MongoConnection;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import org.bson.Document;
-
-import static com.mongodb.client.model.Filters.*;
-
 import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.*;
 
 /**
  * DAO class that manages {@link FriendRequest}
@@ -24,7 +19,7 @@ import java.util.List;
 public class FriendRequestDAO extends DAO{
 
     public FriendRequestDAO(){
-        super("friendRequest");
+        super("friendrequest");
     }
 
     public List<FriendRequest> findAll(){
@@ -44,8 +39,8 @@ public class FriendRequestDAO extends DAO{
     /**
      * Inserts a friend request in the database
      * @param fr the friend request to insert
-     * @return false if FriendRequest already exists in database, true otherwise
-     * @throws MongoException if the friend request already exists
+     * @return the just inserted {@link FriendRequest}
+     * @throws DuplicateDataException if the friend request already exists
      */
     public FriendRequest insertOne(FriendRequest fr) throws DuplicateDataException{
 
@@ -76,10 +71,10 @@ public class FriendRequestDAO extends DAO{
         return fr;
     }
 
-
     /**
      * Removes a {@link FriendRequest} from the database
      * @param fr the {@link FriendRequest} to remove
+     * @throws NotFoundException if the {@link FriendRequest} is not found in the database
      */
     public void deleteOne(FriendRequest fr) throws NotFoundException{
         int i = 0;
@@ -92,9 +87,16 @@ public class FriendRequestDAO extends DAO{
             throw new NotFoundException("Friend request not found");
     }
 
+    /**
+     * Finds all the {@link FriendRequest} that matches the parameters
+     * @param field the name of the field to find
+     * @param pseudo the value of the field
+     * @return a {@link List} of {@link FriendRequest}
+     */
     public List<FriendRequest> findByField(String field, String pseudo){
         List<FriendRequest> list = new ArrayList<FriendRequest>();
         MongoCursor<Document> cursor = coll.find(eq(field,pseudo)).iterator();
+
         try {
             while (cursor.hasNext()) {
                 list.add(gson.fromJson(cursor.next().toJson(),FriendRequest.class));

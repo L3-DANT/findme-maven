@@ -5,6 +5,11 @@ package exceptions;
  */
 public class NotFoundException extends Exception{
 
+    /**
+     * Creates the exception with message
+     * @param s the message
+     * @see Exception#Exception(String)
+     */
     public NotFoundException(String s){
         super(s);
     }
