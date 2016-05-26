@@ -3,6 +3,7 @@ package models;
 import com.google.gson.annotations.Expose;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -20,12 +21,17 @@ public class User implements Serializable {
     private List<User> friendList;
     @Expose
     private String phoneNumber;
+    @Expose
+    private State state;
 
+    public enum State {
+        ONLINE,AWAY,OFFLINE;
+    }
     /**
      * Constructs the user with empty parameters
      */
     public User() {
-        this(null, null, 0, 0, null);
+        this(null, null, 0, 0, State.ONLINE,null);
     }
 
     /**
@@ -33,7 +39,7 @@ public class User implements Serializable {
      * @param pseudo the pseudo
      */
     public User(String pseudo) {
-        this(pseudo, null, 0, 0, null);
+        this(pseudo, null, 0, 0, State.ONLINE,null);
     }
 
     /**
@@ -41,9 +47,10 @@ public class User implements Serializable {
      * @param pseudo the pseudo
      * @param latitude the latitude
      * @param longitude the longitude
+     * @param state the state
      */
-    public User(String pseudo, float latitude, float longitude){
-        this(pseudo,null,latitude,longitude,null);
+    public User(String pseudo, float latitude, float longitude, State state){
+        this(pseudo,null,latitude,longitude,state,null);
     }
 
     /**
@@ -52,7 +59,7 @@ public class User implements Serializable {
      * @param password the password
      */
     public User(String pseudo, String password) {
-        this(pseudo, password, 0, 0, null);
+        this(pseudo, password, 0, 0, State.ONLINE,null);
     }
 
     /**
@@ -63,7 +70,7 @@ public class User implements Serializable {
      * @param phoneNumber the phone number
      */
     public User(String pseudo, float latitude, float longitude, String phoneNumber) {
-        this(pseudo, null, latitude, longitude, phoneNumber);
+        this(pseudo, null, latitude, longitude, State.ONLINE,phoneNumber);
     }
 
     /**
@@ -72,14 +79,16 @@ public class User implements Serializable {
      * @param password the password
      * @param latitude the latitude
      * @param longitude the longitude
+     * @param state the state
      * @param phoneNumber the phone number
      */
-    public User(String pseudo, String password, float latitude, float longitude, String phoneNumber) {
+    public User(String pseudo, String password, float latitude, float longitude, State state,String phoneNumber) {
         this.pseudo = pseudo;
         this.password = password;
         this.latitude = latitude;
         this.longitude = longitude;
         this.friendList = new ArrayList<User>();
+        this.state = state;
         this.phoneNumber = phoneNumber;
     }
 
@@ -144,6 +153,14 @@ public class User implements Serializable {
      */
     public void clearFriendList() {
         friendList = new ArrayList<User>();
+    }
+
+    /**
+     * Sets the user's friend list
+     * @param friendList the friend list
+     */
+    public void setFriendList(List<User> friendList) {
+        this.friendList = friendList;
     }
 
     /**
@@ -213,5 +230,13 @@ public class User implements Serializable {
      */
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
     }
 }

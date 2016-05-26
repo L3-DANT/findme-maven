@@ -65,6 +65,12 @@ public class FriendRequestServiceTest {
         verify(frDAO,times(1)).deleteOne(any(FriendRequest.class));
     }
 
+    @Test
+    public void deleteManySuccess() {
+        frService.deleteMany("John");
+        verify(frDAO,times(1)).deleteMany(anyString());
+    }
+
     @Test(expected = NotFoundException.class)
     public void deleteOneNotFoundException() throws NotFoundException {
         doThrow(new NotFoundException("FriendRequest not found")).when(frDAO).deleteOne(any(FriendRequest.class));

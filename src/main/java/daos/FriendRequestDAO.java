@@ -5,6 +5,8 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import org.bson.Document;
+
+import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +17,7 @@ import static com.mongodb.client.model.Filters.*;
  * DAO class that manages {@link FriendRequest}
  * Note that in most cases, order of {@link FriendRequest#caller} and {@link FriendRequest#receiver} doesn't matter
  */
-@Stateless
+@Singleton
 public class FriendRequestDAO extends DAO{
 
     public FriendRequestDAO(){
@@ -85,6 +87,15 @@ public class FriendRequestDAO extends DAO{
         i += coll.deleteOne(doc).getDeletedCount();
         if(i < 1)
             throw new NotFoundException("Friend request not found");
+    }
+
+    /**
+     * Deletes all the {@link FriendRequest} related to the all the {@link models.User#pseudo}, either as a all the {@link FriendRequest#caller} or a all the {@link FriendRequest#receiver}
+     * @param pseudo the {@link models.User#pseudo}
+     */
+    public void deleteMany(String pseudo) {
+        coll.deleteMany(new Document("caller",pseudo));
+        coll.deleteMany(new Document("receiver",pseudo));
     }
 
     /**
