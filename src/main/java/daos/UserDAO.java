@@ -8,6 +8,7 @@ import exceptions.NotFoundException;
 import models.User;
 import org.bson.Document;
 
+import javax.ejb.Singleton;
 import javax.ejb.Stateless;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +18,7 @@ import static com.mongodb.client.model.Filters.eq;
 /**
  * DAO class that manages {@link User}
  */
-@Stateless
+@Singleton
 public class UserDAO extends DAO {
 
     public UserDAO(){

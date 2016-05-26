@@ -6,7 +6,6 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import exceptions.UnauthorisedException;
 import models.User;
-import services.UserService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
@@ -20,7 +19,6 @@ import java.util.Map;
 public class UserController extends Controller{
 
     private Pusher pusher = PusherConnection.getPusher();
-    private UserService userService = new UserService();
 
     /**
      * Gets the user and updates its {@link User#friendList}
@@ -59,10 +57,8 @@ public class UserController extends Controller{
 
     /**
      * Updates given {@link User} in database
+     * If only the {@link User#pseudo}, {@link User#latitude} and {@link User#longitude} are given, triggers a "position-updated" even on {@link Pusher}
      * If friends are removed, sends a "friends-removed" event on {@link Pusher}
-     * Note that this method is a bit heavy and should be used only for the {@link User}'s profile changes.
-     * If you want to update the coordinates of the {@link User}, please refer to the {@link UserController#updateCoordinates(String)} method.
-     * Not that calling the {@link UserController#updateUser(String)} method won't trigger the "position-updated" event on {@link Pusher}
      * @param userAsString the {@link User} to update
      * @return the serialized {@link User}
      * @throws WebApplicationException 404 if the {@link User} can't be found
@@ -76,9 +72,16 @@ public class UserController extends Controller{
     public String updateUser(String userAsString){
         try {
             User user = gson.fromJson(userAsString,User.class);
-            String[] array = userService.updateUser(user);
-            if(array != null){
-                pusher.trigger("private-"+user.getPseudo(),"friends-removed",array);
+            if(user.getPseudo() != null && user.getLatitude() != 0 && user.getLongitude() != 0
+                    && user.getPassword() == null && (user.getFriendList() == null || user.getFriendList().size() == 0) && user.getPhoneNumber() == null) {
+                userService.updateCoordinates(user);
+                user.setFriendList(null);
+                pusher.trigger("private-"+user.getPseudo(),"position-updated",user);
+            } else {
+                String[] array = userService.updateUser(user);
+                if (array != null) {
+                    pusher.trigger("private-" + user.getPseudo(), "friends-removed", array);
+                }
             }
             return userAsString;
         } catch (NotFoundException e) {
@@ -99,10 +102,10 @@ public class UserController extends Controller{
     @POST
     @Consumes("application/json")
     public String login(String credentials){
-        Map<String,String> map = gson.fromJson(credentials, HashMap.class);
+        User user = gson.fromJson(credentials,User.class);
         try {
-            if(userService.connect(map.get("pseudo"),map.get("password"))){
-                return gson.toJson(userService.getUser(map.get("pseudo")));
+            if(userService.connect(user.getPseudo(),user.getPassword())){
+                return gson.toJson(userService.getUser(user.getPseudo()));
             } else {
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
@@ -111,30 +114,9 @@ public class UserController extends Controller{
         }
     }
 
-    /**
-     * Lighter version of POST method, only updating the {@link User} {@link User#latitude} and {@link User#longitude}
-     * Triggers a "position-updated" event on {@link Pusher}
-     * @param userAsString the {@link User} to update
-     * @throws WebApplicationException 404 if the {@link User} can't be found in database
-     * @see Pusher
-     */
-    @Path("v1/update-coordinates")
-    @POST
-    @Consumes("application/json")
-    public void updateCoordinates(String userAsString){
-        try {
-            User user = gson.fromJson(userAsString,User.class);
-            userService.updateCoordinates(user);
-            user.clearFriendList();
-            pusher.trigger("private-"+user.getPseudo(),"position-updated",user);
-        } catch (NotFoundException e) {
-            throw new WebApplicationException(Response.Status.NOT_FOUND);
-        }
-
-    }
 
     /**
-     * Removes a {@link User} from database
+     * Removes a {@link User} from database, also deletes every {@link models.FriendRequest} related to it
      * @param pseudo the {@link User#pseudo} to remove
      * @throws WebApplicationException 404 if the {@link User} can't be found in database
      */
@@ -142,13 +124,20 @@ public class UserController extends Controller{
     @DELETE
     public void deleteUser(@PathParam("pseudo") String pseudo) {
         try {
+            User user = userService.getUser(pseudo);
             userService.deleteUser(pseudo);
+            frService.deleteMany(pseudo);
+            if(user.getFriendList() != null && user.getFriendList().size() > 0){
+                String[] userList = new String[user.getFriendList().size()];
+                for (int i = 0 ; i < userList.length ; i++) {
+                    userList[i] = user.getFriendList().get(i).getPseudo();
+                }
+                pusher.trigger("private-"+pseudo,"friends-removed",userList);
+            }
         } catch (NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
-
-
 
     /**
      * Insert false data in database (use only for tests)

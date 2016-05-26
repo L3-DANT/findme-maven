@@ -23,12 +23,12 @@ public class UserService {
     public List<User> insertTest(){
         dao.clearCollection();
         List<User> list = new ArrayList<User>();
-        list.add(new User("Antoine",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84927f,2.35268f,"0650555075"));
-        list.add(new User("François",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84862f,2.36071f,"06 60 76 99 44"));
-        list.add(new User("Maxime",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84723f,2.35835f,"+33667479299"));
-        list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84461f,2.35221f,"+33 6 02 24 17 93"));
-        list.add(new User("Adrien",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84427f,2.35865f,null));
-        list.add(new User("Olivier",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84138f,2.35972f,null));
+        list.add(new User("Antoine",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84927f,2.35268f, User.State.ONLINE,"0650555075"));
+        list.add(new User("François",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84862f,2.36071f,User.State.ONLINE,"06 60 76 99 44"));
+        list.add(new User("Maxime",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84723f,2.35835f,User.State.ONLINE,"+33667479299"));
+        list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84461f,2.35221f,User.State.ONLINE,"+33 6 02 24 17 93"));
+        list.add(new User("Adrien",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84427f,2.35865f,User.State.AWAY,"0606060606"));
+        list.add(new User("Olivier",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84138f,2.35972f,User.State.OFFLINE,"0606060606"));
         for (User user : list) {
             try {
                 dao.insertOne(user);
@@ -78,7 +78,7 @@ public class UserService {
         }
 
         //copy of userDB used in the loop to avoid concurrent access to userDB.friendList
-        User insert = new User(userDB.getPseudo(),userDB.getPassword(),userDB.getLatitude(),userDB.getLongitude(),userDB.getPhoneNumber());
+        User insert = new User(userDB.getPseudo(),userDB.getPassword(),userDB.getLatitude(),userDB.getLongitude(),userDB.getState(),userDB.getPhoneNumber());
 
         //check for eventual password change
         if(user.getPassword() != null && !BCrypt.checkpw(user.getPassword(),insert.getPassword())){
@@ -177,11 +177,17 @@ public class UserService {
     }
 
     /**
-     * Removes a user from database
+     * Removes a user from database, and removes it from its friends' {@link User#friendList}
      * @param pseudo the {@link User#pseudo}
      * @throws NotFoundException if the user can't be found in database
      */
     public void deleteUser(String pseudo) throws NotFoundException {
+        User user = new User(pseudo);
+        for (User friend: user.getFriendList()) {
+            User friendDB = dao.findOneByPseudo(friend.getPseudo());
+            friendDB.removeFriend(user);
+            dao.replaceOne(friendDB);
+        }
         dao.deleteOne(pseudo);
     }
 

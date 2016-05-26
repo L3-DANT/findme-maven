@@ -50,7 +50,6 @@ public class UserServiceTest {
     }
 
 
-
     @Test
     public void updateUserWithSmallerFriendListDifferentPassword() throws Exception {
         User user = new User("Bob", BCrypt.hashpw("123", (BCrypt.gensalt(12))));
@@ -74,7 +73,7 @@ public class UserServiceTest {
         when(mock.getLongitude()).thenReturn(user.getLongitude());
         when(mock.getFriendList()).thenReturn(user.getFriendList());
         when(mock.getPhoneNumber()).thenReturn(user.getPhoneNumber());
-        PowerMockito.whenNew(User.class).withArguments(anyString(),anyString(),anyFloat(),anyFloat(),anyString()).thenReturn(mock);
+        PowerMockito.whenNew(User.class).withArguments(anyString(),anyString(),anyFloat(),anyFloat(),any(User.State.class),anyString()).thenReturn(mock);
 
 
         String[] result = userService.updateUser(usercopy);
@@ -104,7 +103,7 @@ public class UserServiceTest {
         when(mock.getLongitude()).thenReturn(user.getLongitude());
         when(mock.getFriendList()).thenReturn(user.getFriendList());
         when(mock.getPhoneNumber()).thenReturn(user.getPhoneNumber());
-        PowerMockito.whenNew(User.class).withArguments(anyString(),anyString(),anyFloat(),anyFloat(),anyString()).thenReturn(mock);
+        PowerMockito.whenNew(User.class).withArguments(anyString(),anyString(),anyFloat(),anyFloat(),any(User.State.class),anyString()).thenReturn(mock);
 
         String [] result = userService.updateUser(user);
         assertNull(result);
@@ -224,8 +223,8 @@ public class UserServiceTest {
         float lat = 2.85f;
         float lon = 21.785f;
         float epsilon = 0.00000001f;
-        User user = new User("Bob",452.1f,48.36f);
-        User u = new User("Bob",lat,lon);
+        User user = new User("Bob",452.1f,48.36f,User.State.ONLINE);
+        User u = new User("Bob",lat,lon,User.State.ONLINE);
         when(userDAO.findOneByPseudo(anyString())).thenReturn(user);
         userService.updateCoordinates(user);
         verify(userDAO,times(1)).findOneByPseudo(anyString());
@@ -236,7 +235,7 @@ public class UserServiceTest {
     @Test(expected = NotFoundException.class)
     public void updateCoordinatesNotFoundException() throws NotFoundException {
         doThrow(new NotFoundException("User not found")).when(userDAO).findOneByPseudo(anyString());
-        userService.updateCoordinates(new User("John",45f,78f));
+        userService.updateCoordinates(new User("John",45f,78f, User.State.ONLINE));
     }
 
 

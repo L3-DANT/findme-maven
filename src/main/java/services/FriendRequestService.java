@@ -50,6 +50,14 @@ public class FriendRequestService {
     }
 
     /**
+     * Deletes all the {@link FriendRequest} related to the all the {@link models.User#pseudo}, either as a all the {@link FriendRequest#caller} or a all the {@link FriendRequest#receiver}
+     * @param pseudo the {@link models.User#pseudo}
+     */
+    public void deleteMany(String pseudo) {
+        dao.deleteMany(pseudo);
+    }
+
+    /**
      * Finds all {@link models.User#pseudo} that one user asked for friendship
      * @param pseudo the {@link models.User#pseudo}
      * @return a string list of the {@link models.User#pseudo} found

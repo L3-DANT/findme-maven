@@ -4,8 +4,6 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import models.FriendRequest;
 import models.User;
-import services.FriendRequestService;
-import services.UserService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -15,10 +13,6 @@ import javax.ws.rs.core.Response;
 @Path("/friendrequest")
 @Produces("application/json")
 public class FriendRequestController extends Controller{
-
-    private FriendRequestService frService = new FriendRequestService();
-
-    private UserService userService = new UserService();
 
     /**
      * @param caller the user that asked or received the {@link FriendRequest}

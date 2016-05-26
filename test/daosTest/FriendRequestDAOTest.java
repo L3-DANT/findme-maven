@@ -78,17 +78,23 @@ public class FriendRequestDAOTest extends AbstractDAOTest {
 
     @Test
     public void deleteOneSuccess() throws NotFoundException {
-        FriendRequest test1 = new FriendRequest(fr.getCaller(), fr.getReceiver());
-        FriendRequest test2 = new FriendRequest(fr2.getReceiver(), fr2.getCaller());
-        dao.deleteOne(test1);
-        assertNull(getDBFR(test1.getCaller(), test1.getReceiver()));
-        dao.deleteOne(test2);
-        assertNull(getDBFR(test2.getCaller(), test2.getReceiver()));
+        dao.deleteOne(fr);
+        assertNull(getDBFR(fr.getCaller(), fr.getReceiver()));
+        dao.deleteOne(fr2);
+        assertNull(getDBFR(fr2.getReceiver(), fr2.getCaller()));
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteOneNotFoundException() throws NotFoundException {
         dao.deleteOne(new FriendRequest("Jean", "Georges"));
+    }
+
+    @Test
+    public void deleteManySuccess() {
+        dao.deleteMany("a");
+        assertNull(getDBFR("a",fr.getReceiver()));
+        assertNull(getDBFR("a",fr2.getReceiver()));
+        assertNull(getDBFR("a",fr3.getReceiver()));
     }
 
     @Test
