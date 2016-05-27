@@ -17,7 +17,7 @@ public class MongoConnection {
 
 	private static final class MongoInitializer {
 
-		private static final MongoDatabase db = new MongoClient("127.0.0.1", 27017).getDatabase("findme");
+		private static final MongoDatabase db = new MongoClient(Config.DATABASE_HOST, Config.DATABASE_PORT).getDatabase(Config.DATABASE_NAME);
 
 	}
 

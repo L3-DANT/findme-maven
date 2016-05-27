@@ -20,32 +20,6 @@ import static org.junit.Assert.*;
 
 public class FriendRequestControllerTest extends AbstractControllerTest{
 
-//    private User alfred = new User("Alfred","123");
-//    private User bob = new User("Bob", "123");
-//    private User john = new User("John", "123");
-//    private User meuporg = new User("Meuporg", "123");
-//
-//    private FriendRequest fr = new FriendRequest("Alfred","Bob");
-//    private FriendRequest fr2 = new FriendRequest("Alfred","John");
-//    private FriendRequest fr3 = new FriendRequest("John","Bob");
-//
-//    private UserService userService;
-//    private FriendRequestService frService;
-//
-//    @Before
-//    public void insertBefore(){
-//
-//        userService = new UserService();
-//        frService = new FriendRequestService();
-//        DatabaseUtils.initialiseCollection("user", alfred,bob,john,meuporg);
-//        DatabaseUtils.initialiseCollection("friendrequest",fr,fr2,fr3);
-//    }
-//
-//    @After
-//    public void dropColl(){
-//        DatabaseUtils.clearCollection("user","friendrequest");
-//    }
-
     @Override
     protected Application configure() {
         return new ResourceConfig(FriendRequestController.class);

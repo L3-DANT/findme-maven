@@ -72,7 +72,7 @@ public class UserController extends Controller{
     public String updateUser(String userAsString){
         try {
             User user = gson.fromJson(userAsString,User.class);
-            if(user.getPseudo() != null && user.getLatitude() != 0 && user.getLongitude() != 0
+            if(user.getPseudo() != null && user.getLatitude() != 0 && user.getLongitude() != 0 && user.getState() != null
                     && user.getPassword() == null && (user.getFriendList() == null || user.getFriendList().size() == 0) && user.getPhoneNumber() == null) {
                 userService.updateCoordinates(user);
                 user.setFriendList(null);

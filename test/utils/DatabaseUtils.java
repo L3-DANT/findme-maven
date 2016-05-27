@@ -3,6 +3,7 @@ package utils;
 import com.google.gson.Gson;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
+import connections.Config;
 import de.flapdoodle.embed.mongo.MongodExecutable;
 import de.flapdoodle.embed.mongo.MongodProcess;
 import de.flapdoodle.embed.mongo.MongodStarter;
@@ -28,9 +29,9 @@ public class DatabaseUtils {
      */
     private static MongodExecutable mongodExecutable;
 
-    public static final String IP = "127.0.0.1";
-    public static final int PORT = 27017;
-    public static final String DB_NAME = "findme";
+    public static final String IP = Config.DATABASE_HOST;
+    public static final int PORT = Config.DATABASE_PORT;
+    public static final String DB_NAME = Config.DATABASE_NAME;
 
     private static Map<String,MongoCollection<Document>> map = new HashMap<String,MongoCollection<Document>>();
     private static MongoClient client;

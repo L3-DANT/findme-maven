@@ -51,6 +51,7 @@ public class FriendRequestController extends Controller{
     /**
      * Creates a {@link FriendRequest} related to two users
      * @param fr the parsed json
+     * @throws WebApplicationException 401 if the users are already friends
      * @throws WebApplicationException 404 if at least one of the users in the {@link FriendRequest} doesn't exist in database
      * @throws WebApplicationException 409 if the {@link FriendRequest} already exists
      */
@@ -59,8 +60,16 @@ public class FriendRequestController extends Controller{
     @Consumes("application/json")
     public void createFriendRequest(FriendRequest fr) {
         try {
-            userService.getUser(fr.getCaller());
-            userService.getUser(fr.getReceiver());
+            User user1 = userService.getUser(fr.getCaller());
+            User user2 = userService.getUser(fr.getReceiver());
+            if(user1.getFriendList().size() > user2.getFriendList().size()){
+                if(user2.getFriendList().contains(user1))
+                    throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+            } else {
+                if(user1.getFriendList().contains(user2)){
+                    throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+                }
+            }
             frService.insertFriendRequest(fr);
         } catch(NotFoundException e) {
             throw new WebApplicationException(Response.Status.NOT_FOUND);

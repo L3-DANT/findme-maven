@@ -33,8 +33,15 @@
             <version>0.9.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>1.17</version>
+        </dependency>
 
-        <!-- test lib -->
+
+
+        <!-- test libs -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

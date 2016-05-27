@@ -3,6 +3,7 @@ package servicesTest;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+import com.google.gson.Gson;
 import daos.UserDAO;
 import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
@@ -13,10 +14,15 @@ import models.User;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.yaml.snakeyaml.Yaml;
 import security.BCrypt;
 import services.UserService;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.Map;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({UserService.class})
@@ -237,7 +243,6 @@ public class UserServiceTest {
         doThrow(new NotFoundException("User not found")).when(userDAO).findOneByPseudo(anyString());
         userService.updateCoordinates(new User("John",45f,78f, User.State.ONLINE));
     }
-
 
 
 }
