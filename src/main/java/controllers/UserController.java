@@ -34,10 +34,10 @@ public class UserController extends Controller{
     public String getUser(@PathParam("pseudo") String pseudo){
         try {
             String user = gson.toJson(userService.getUser(pseudo));
-            logger.info("Called GET \"v1/"+pseudo+"\". Everything went right.");
+            logger.info("Called GET \"user/v1/"+pseudo+"\". Everything went right.");
             return user;
         } catch (NotFoundException e) {
-            logger.error("Calling GET \"v1/"+pseudo+"\" threw NotFoundException.",e);
+            logger.error("Calling GET \"user/v1/"+pseudo+"\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
@@ -54,10 +54,10 @@ public class UserController extends Controller{
     public String signUp(String userAsString){
         try {
             User user = gson.fromJson(userAsString,User.class);
-            logger.info("Called PUT \"v1\" with data \n"+userAsString+"\nEverything went right.");
+            logger.info("Called PUT \"user/v1\" with data \n"+userAsString+"\nEverything went right.");
             return gson.toJson(userService.insertUser(user));
         } catch (DuplicateDataException e){
-            logger.error("Calling PUT \"v1\" with data \n"+userAsString+"\nthrew DuplicateDataExepction.",e);
+            logger.error("Calling PUT \"user/v1\" with data \n"+userAsString+"\nthrew DuplicateDataExepction.",e);
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
     }
@@ -85,10 +85,10 @@ public class UserController extends Controller{
                 userService.updateCoordinates(user);
                 user.setFriendList(null);
                 pusher.trigger("private-"+user.getPseudo(),"position-updated",user);
-                logs = "Called POST \"v1\" with data\n"+userAsString+"\nEverything went right.\nPusher event \"position-updated\" triggered with data\n"+gson.toJson(user);
+                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went right.\nPusher event \"position-updated\" triggered with data\n"+gson.toJson(user);
             } else {
                 String[] userList = userService.updateUser(user);
-                logs = "Called POST \"v1\" with data\n"+userAsString+"\nEverything went right.";
+                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went right.";
                 if (userList != null) {
                     pusher.trigger("private-" + user.getPseudo(), "friends-removed", userList);
                     logs+= "\nPusher event \"friends-removed\" triggered with data\n"+gson.toJson(userList);
@@ -97,10 +97,10 @@ public class UserController extends Controller{
             logger.info(logs);
             return userAsString;
         } catch (NotFoundException e) {
-            logger.error("Calling POST \"v1\" with data \n"+userAsString+"\nthrew NotFoundException.",e);
+            logger.error("Calling POST \"user/v1\" with data \n"+userAsString+"\nthrew NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (UnauthorisedException e){
-            logger.error("Calling POST \"v1\" with data \n"+userAsString+"\nthrew UnauthorisedException.",e);
+            logger.error("Calling POST \"user/v1\" with data \n"+userAsString+"\nthrew UnauthorisedException.",e);
             throw new WebApplicationException("If you want to add friends, please proceed by calling friendrequest urls.",Response.Status.BAD_REQUEST);
         }
     }
@@ -119,14 +119,14 @@ public class UserController extends Controller{
         User user = gson.fromJson(credentials,User.class);
         try {
             if(userService.connect(user.getPseudo(),user.getPassword())){
-                logger.info("Called POST \"v1/login\" with data \n"+credentials+"\nEverything went right.");
+                logger.info("Called POST \"user/v1/login\" with data \n"+credentials+"\nEverything went right.");
                 return gson.toJson(userService.getUser(user.getPseudo()));
             } else {
-                logger.error("Called POST \"v1/login\" with data \n"+credentials+"\n went wrong : credentials don't match.");
+                logger.error("Called POST \"user/v1/login\" with data \n"+credentials+"\n went wrong : credentials don't match.");
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
         } catch (NotFoundException e) {
-            logger.error("Calling POST \"v1\" with data \n"+credentials+"\nthrew NotFoundException.",e);
+            logger.error("Calling POST \"user/v1\" with data \n"+credentials+"\nthrew NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
@@ -141,7 +141,7 @@ public class UserController extends Controller{
     @DELETE
     public void deleteUser(@PathParam("pseudo") String pseudo) {
         try {
-            String logs = "Called DELETE \"v1/"+pseudo+"\". Everything went right.";
+            String logs = "Called DELETE \"user/v1/"+pseudo+"\". Everything went right.";
             User user = userService.getUser(pseudo);
             userService.deleteUser(pseudo);
             frService.deleteMany(pseudo);
@@ -155,7 +155,7 @@ public class UserController extends Controller{
             }
             logger.info(logs);
         } catch (NotFoundException e) {
-            logger.error("Calling DELETE \"v1/"+pseudo+"\" threw NotFoundException.",e);
+            logger.error("Calling DELETE \"user/v1/"+pseudo+"\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
