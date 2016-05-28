@@ -129,7 +129,6 @@ public class UserService {
         User friend1 = dao.findOneByPseudo(pseudo1);
         User friend2 = dao.findOneByPseudo(pseudo2);
 
-
         //Clearing passwords
         friend1.setPassword(null);
         friend2.setPassword(null);

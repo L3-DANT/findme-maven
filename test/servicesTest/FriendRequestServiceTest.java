@@ -60,6 +60,14 @@ public class FriendRequestServiceTest {
     }
 
     @Test
+    public void existFriendRequest(){
+        when(frDAO.existFriendRequest(any(FriendRequest.class))).thenReturn(true).thenReturn(false);
+        assertTrue(frService.existFriendRequest(new FriendRequest("John","Jean-Paul")));
+        assertFalse(frService.existFriendRequest(new FriendRequest("John","Jean-Paul")));
+        verify(frDAO,times(2)).existFriendRequest(any(FriendRequest.class));
+    }
+
+    @Test
     public void deleteOneSuccess() throws NotFoundException {
         frService.deleteOne(new FriendRequest("Fred","Jamy"));
         verify(frDAO,times(1)).deleteOne(any(FriendRequest.class));

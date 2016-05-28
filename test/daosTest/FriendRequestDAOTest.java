@@ -19,9 +19,7 @@ import java.util.List;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class FriendRequestDAOTest extends AbstractDAOTest {
 
@@ -75,6 +73,13 @@ public class FriendRequestDAOTest extends AbstractDAOTest {
     public void findOneByPseudosNotFoundException() throws NotFoundException {
         dao.findOneByPseudos("a", "Georges");
     }
+
+    @Test
+    public void existFriendRequestT(){
+        assertTrue(dao.existFriendRequest(fr));
+        assertFalse(dao.existFriendRequest(new FriendRequest("Jean-Alfred","Bobby")));
+    }
+
 
     @Test
     public void deleteOneSuccess() throws NotFoundException {

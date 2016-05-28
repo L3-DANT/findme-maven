@@ -11,6 +11,8 @@ import org.junit.Test;
 import services.FriendRequestService;
 import services.UserService;
 import utils.DatabaseUtils;
+
+import javax.ws.rs.PUT;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
@@ -83,6 +85,26 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
         //checks database
         FriendRequest friendRequest = frService.getFriendRequestByPseudos(f.getCaller(),f.getReceiver());
         assertEquals(friendRequest,f);
+
+        s = "{\"caller\":\"" + fr3.getReceiver() + "\",\"receiver\":\"" + fr3.getCaller() + "\"}";
+        response = target("friendrequest/v1").request().put(Entity.json(s));
+        assertTrue(response.getStatus() < 300);
+        User u1 = userService.getUser(fr3.getCaller());
+        User u2 = userService.getUser(fr3.getReceiver());
+        int size1 = u1.getFriendList().size();
+        int size2 = u2.getFriendList().size();
+        assertNotEquals(u1.getFriendList().size(),size1+1);
+        assertTrue(u1.getFriendList().contains(u2));
+        assertNotEquals(u2.getFriendList().size(),size2+1);
+        assertTrue(u2.getFriendList().contains(u1));
+
+    }
+
+    @PUT
+    public void PUT401() {
+        String s = "{\"caller\":\"" + fr.getCaller() + "\",\"receiver\":\"" + fr.getReceiver() + "\"}";
+        Response response = target("friendrequest/v1").request().put(Entity.json(s));
+        assertEquals(response.getStatus(),401);
     }
 
     @Test
@@ -95,11 +117,8 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
 
     @Test
     public void PUT409() {
-        String s = "{\"caller\":\"" + fr.getCaller() + "\",\"receiver\":\"" + fr.getReceiver() + "\"}";
+        String s = "{\"caller\":\"" + fr3.getCaller() + "\",\"receiver\":\"" + fr3.getReceiver() + "\"}";
         Response response = target("friendrequest/v1").request().put(Entity.json(s));
-        assertEquals(response.getStatus(),409);
-        s = "{\"caller\":\"" + fr.getReceiver() + "\",\"receiver\":\"" + fr.getCaller() + "\"}";
-        response = target("friendrequest/v1").request().put(Entity.json(s));
         assertEquals(response.getStatus(),409);
     }
 
@@ -113,10 +132,12 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
 
         User u1 = userService.getUser(fr.getCaller());
         User u2 = userService.getUser(fr.getReceiver());
-        assertNotEquals(u1.getFriendList().size(),0);
-        assertEquals(u1.getFriendList().get(0),u2);
-        assertNotEquals(u2.getFriendList().size(),0);
-        assertEquals(u2.getFriendList().get(0),u1);
+        int size1 = u1.getFriendList().size();
+        int size2 = u2.getFriendList().size();
+        assertNotEquals(u1.getFriendList().size(),size1+1);
+        assertTrue(u1.getFriendList().contains(u2));
+        assertNotEquals(u2.getFriendList().size(),size2+1);
+        assertTrue(u2.getFriendList().contains(u1));
     }
 
     @Test

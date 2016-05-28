@@ -2,6 +2,7 @@
 database_host=127.0.0.1
 database_port=27017
 database_name=findme
+
 #Pusher properties
 app_id=42
 key=hadokey
