@@ -6,12 +6,10 @@ import services.FriendRequestService;
 import services.UserService;
 
 /**
- * Abstract class used to factor uses of {@link Gson}
+ * Abstract class used to factor uses of {@link Gson} and Services
  */
 public abstract class Controller {
-
     protected Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();
     protected UserService userService = new UserService();
     protected FriendRequestService frService = new FriendRequestService();
-
 }

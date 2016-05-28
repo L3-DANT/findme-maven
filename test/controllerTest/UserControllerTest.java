@@ -22,36 +22,6 @@ import static org.junit.Assert.assertTrue;
 
 public class UserControllerTest extends AbstractControllerTest {
 
-//    private User alfred = new User("Alfred", BCrypt.hashpw("123", (BCrypt.gensalt(12))));
-//    private User u = new User("Bob","123");
-//    private User u2 = new User("John","123");
-//    private User u3 = new User("Fred","123");
-//
-//    private UserService userService;
-//
-//    @Before
-//    public void insertBefore(){
-//        User ucopy = new User("Bob","123");
-//        User u2copy = new User("John","123");
-//        User u3copy = new User("Fred","123");
-//        u.addFriend(alfred);
-//        u2.addFriend(alfred);
-//        u3.addFriend(alfred);
-//        alfred.addFriend(ucopy);
-//        alfred.addFriend(u2copy);
-//        alfred.addFriend(u3copy);
-//
-//
-//
-//        userService = new UserService();
-//        DatabaseUtils.initialiseCollection("user", alfred,u,u2,u3);
-//    }
-
-//    @After
-//    public void dropColl(){
-//        DatabaseUtils.clearCollection("user");
-//    }
-
     @Override
     protected Application configure() {
         return new ResourceConfig(UserController.class);

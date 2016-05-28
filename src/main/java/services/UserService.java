@@ -88,12 +88,12 @@ public class UserService {
         List<String> ret = null;
 
 
-        if(user.getLatitude() != 0)
-            insert.setLatitude(user.getLatitude());
-        if(user.getLongitude() != 0)
-            insert.setLongitude(user.getLongitude());
+        insert.setLatitude(user.getLatitude());
+        insert.setLongitude(user.getLongitude());
         if(user.getPhoneNumber() != null)
             insert.setPhoneNumber(user.getPhoneNumber());
+        if(user.getState() != null)
+            insert.setState(user.getState());
 
         //check for eventual removal of friends
         if(listUser != null && listUser.size() < listUserDB.size()) {
@@ -111,7 +111,6 @@ public class UserService {
                 }
             }
         }
-
         dao.replaceOne(insert);
         return ret == null  ? null : ret.toArray(new String[ret.size()]);
     }
@@ -127,13 +126,12 @@ public class UserService {
         User friend1 = dao.findOneByPseudo(pseudo1);
         User friend2 = dao.findOneByPseudo(pseudo2);
 
-
         //Clearing passwords
         friend1.setPassword(null);
         friend2.setPassword(null);
         // Clearing friendList
-        friend1.clearFriendList();
-        friend2.clearFriendList();
+        friend1.setFriendList(null);
+        friend2.setFriendList(null);
 
         // Getting users from DB
         User user1 = dao.findOneByPseudo(pseudo1);
@@ -160,6 +158,7 @@ public class UserService {
             User tmp = dao.findOneByPseudo(friend.getPseudo());
             friend.setLatitude(tmp.getLatitude());
             friend.setLongitude(tmp.getLongitude());
+            friend.setState(tmp.getState());
         }
         return user;
     }
@@ -200,6 +199,7 @@ public class UserService {
         User userDB = dao.findOneByPseudo(user.getPseudo());
         userDB.setLongitude(user.getLongitude());
         userDB.setLatitude(user.getLatitude());
+        userDB.setState(user.getState());
         dao.replaceOne(userDB);
     }
 

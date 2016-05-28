@@ -45,7 +45,6 @@ public class FriendRequestDAO extends DAO{
      * @throws DuplicateDataException if the friend request already exists
      */
     public FriendRequest insertOne(FriendRequest fr) throws DuplicateDataException{
-
         try{
             findOneByPseudos(fr.getCaller(),fr.getReceiver());
             throw new DuplicateDataException("FriendRequest already exists in database");
@@ -71,6 +70,16 @@ public class FriendRequestDAO extends DAO{
         }
         FriendRequest fr = gson.fromJson(doc.toJson(),FriendRequest.class);
         return fr;
+    }
+
+    /**
+     * Checks if the exact {@link FriendRequest} exists in database
+     * @param fr the {@link FriendRequest} to check
+     * @return true if it exists, false otherwise
+     */
+    public boolean existFriendRequest(FriendRequest fr){
+        Document doc = coll.find(and(eq("caller",fr.getCaller()),eq("receiver",fr.getReceiver()))).first();
+        return !(doc == null);
     }
 
     /**

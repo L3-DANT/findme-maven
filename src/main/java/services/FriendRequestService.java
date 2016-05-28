@@ -41,6 +41,15 @@ public class FriendRequestService {
     }
 
     /**
+     * Checks if the exact {@link FriendRequest} exists in database
+     * @param fr the {@link FriendRequest} to check
+     * @return true if it exists, false otherwise
+     */
+    public boolean existFriendRequest(FriendRequest fr){
+        return dao.existFriendRequest(fr);
+    }
+
+    /**
      * Deletes the {@link FriendRequest}
      * @param fr the {@link FriendRequest} to remove
      * @throws NotFoundException if the {@link FriendRequest} can't be found in database

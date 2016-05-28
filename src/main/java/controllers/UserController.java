@@ -6,10 +6,12 @@ import exceptions.DuplicateDataException;
 import exceptions.NotFoundException;
 import exceptions.UnauthorisedException;
 import models.User;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
-import java.util.HashMap;
-import java.util.Map;
+
 
 /**
  * Controller that manages {@link User}
@@ -19,6 +21,7 @@ import java.util.Map;
 public class UserController extends Controller{
 
     private Pusher pusher = PusherConnection.getPusher();
+    private final static Logger logger = LogManager.getLogger(UserController.class);
 
     /**
      * Gets the user and updates its {@link User#friendList}
@@ -31,8 +34,13 @@ public class UserController extends Controller{
     public String getUser(@PathParam("pseudo") String pseudo){
         try {
             String user = gson.toJson(userService.getUser(pseudo));
+            String s = "Called GET \"user/v1/"+pseudo+"\". Everything went well.";
+            System.out.println(s);
+            logger.info(s);
             return user;
         } catch (NotFoundException e) {
+            System.out.println(e.toString());
+            logger.error("Calling GET \"user/v1/"+pseudo+"\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
@@ -49,8 +57,10 @@ public class UserController extends Controller{
     public String signUp(String userAsString){
         try {
             User user = gson.fromJson(userAsString,User.class);
+            logger.info("Called PUT \"user/v1\" with data \n"+userAsString+"\nEverything went well.");
             return gson.toJson(userService.insertUser(user));
         } catch (DuplicateDataException e){
+            logger.error("Calling PUT \"user/v1\" with data \n"+userAsString+"\nthrew DuplicateDataExepction.",e);
             throw new WebApplicationException(Response.Status.CONFLICT);
         }
     }
@@ -71,22 +81,29 @@ public class UserController extends Controller{
     @Consumes("application/json")
     public String updateUser(String userAsString){
         try {
+            String logs;
             User user = gson.fromJson(userAsString,User.class);
-            if(user.getPseudo() != null && user.getLatitude() != 0 && user.getLongitude() != 0
+            if(user.getPseudo() != null && user.getLatitude() != 0 && user.getLongitude() != 0 && user.getState() != null
                     && user.getPassword() == null && (user.getFriendList() == null || user.getFriendList().size() == 0) && user.getPhoneNumber() == null) {
                 userService.updateCoordinates(user);
                 user.setFriendList(null);
                 pusher.trigger("private-"+user.getPseudo(),"position-updated",user);
+                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went well.\nPusher event \"position-updated\" triggered with data\n"+gson.toJson(user);
             } else {
-                String[] array = userService.updateUser(user);
-                if (array != null) {
-                    pusher.trigger("private-" + user.getPseudo(), "friends-removed", array);
+                String[] userList = userService.updateUser(user);
+                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went well.";
+                if (userList != null) {
+                    pusher.trigger("private-" + user.getPseudo(), "friends-removed", userList);
+                    logs+= "\nPusher event \"friends-removed\" triggered with data\n"+gson.toJson(userList);
                 }
             }
-            return userAsString;
+            logger.info(logs);
+            return gson.toJson(user);
         } catch (NotFoundException e) {
+            logger.error("Calling POST \"user/v1\" with data \n"+userAsString+"\nthrew NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         } catch (UnauthorisedException e){
+            logger.error("Calling POST \"user/v1\" with data \n"+userAsString+"\nthrew UnauthorisedException.",e);
             throw new WebApplicationException("If you want to add friends, please proceed by calling friendrequest urls.",Response.Status.BAD_REQUEST);
         }
     }
@@ -105,11 +122,14 @@ public class UserController extends Controller{
         User user = gson.fromJson(credentials,User.class);
         try {
             if(userService.connect(user.getPseudo(),user.getPassword())){
+                logger.info("Called POST \"user/v1/login\" with data \n"+credentials+"\nEverything went well.");
                 return gson.toJson(userService.getUser(user.getPseudo()));
             } else {
+                logger.error("Called POST \"user/v1/login\" with data \n"+credentials+"\n went wrong : credentials don't match.");
                 throw new WebApplicationException(Response.Status.UNAUTHORIZED);
             }
         } catch (NotFoundException e) {
+            logger.error("Calling POST \"user/v1\" with data \n"+credentials+"\nthrew NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
@@ -124,6 +144,7 @@ public class UserController extends Controller{
     @DELETE
     public void deleteUser(@PathParam("pseudo") String pseudo) {
         try {
+            String logs = "Called DELETE \"user/v1/"+pseudo+"\". Everything went well.";
             User user = userService.getUser(pseudo);
             userService.deleteUser(pseudo);
             frService.deleteMany(pseudo);
@@ -133,8 +154,11 @@ public class UserController extends Controller{
                     userList[i] = user.getFriendList().get(i).getPseudo();
                 }
                 pusher.trigger("private-"+pseudo,"friends-removed",userList);
+                logs+= "\nPusher event \"friends-removed\" triggered with data\n"+gson.toJson(userList);
             }
+            logger.info(logs);
         } catch (NotFoundException e) {
+            logger.error("Calling DELETE \"user/v1/"+pseudo+"\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
     }
