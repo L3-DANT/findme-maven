@@ -34,9 +34,12 @@ public class UserController extends Controller{
     public String getUser(@PathParam("pseudo") String pseudo){
         try {
             String user = gson.toJson(userService.getUser(pseudo));
-            logger.info("Called GET \"user/v1/"+pseudo+"\". Everything went right.");
+            String s = "Called GET \"user/v1/"+pseudo+"\". Everything went well.";
+            System.out.println(s);
+            logger.info(s);
             return user;
         } catch (NotFoundException e) {
+            System.out.println(e.toString());
             logger.error("Calling GET \"user/v1/"+pseudo+"\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
@@ -54,7 +57,7 @@ public class UserController extends Controller{
     public String signUp(String userAsString){
         try {
             User user = gson.fromJson(userAsString,User.class);
-            logger.info("Called PUT \"user/v1\" with data \n"+userAsString+"\nEverything went right.");
+            logger.info("Called PUT \"user/v1\" with data \n"+userAsString+"\nEverything went well.");
             return gson.toJson(userService.insertUser(user));
         } catch (DuplicateDataException e){
             logger.error("Calling PUT \"user/v1\" with data \n"+userAsString+"\nthrew DuplicateDataExepction.",e);
@@ -85,17 +88,17 @@ public class UserController extends Controller{
                 userService.updateCoordinates(user);
                 user.setFriendList(null);
                 pusher.trigger("private-"+user.getPseudo(),"position-updated",user);
-                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went right.\nPusher event \"position-updated\" triggered with data\n"+gson.toJson(user);
+                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went well.\nPusher event \"position-updated\" triggered with data\n"+gson.toJson(user);
             } else {
                 String[] userList = userService.updateUser(user);
-                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went right.";
+                logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went well.";
                 if (userList != null) {
                     pusher.trigger("private-" + user.getPseudo(), "friends-removed", userList);
                     logs+= "\nPusher event \"friends-removed\" triggered with data\n"+gson.toJson(userList);
                 }
             }
             logger.info(logs);
-            return userAsString;
+            return gson.toJson(user);
         } catch (NotFoundException e) {
             logger.error("Calling POST \"user/v1\" with data \n"+userAsString+"\nthrew NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -119,7 +122,7 @@ public class UserController extends Controller{
         User user = gson.fromJson(credentials,User.class);
         try {
             if(userService.connect(user.getPseudo(),user.getPassword())){
-                logger.info("Called POST \"user/v1/login\" with data \n"+credentials+"\nEverything went right.");
+                logger.info("Called POST \"user/v1/login\" with data \n"+credentials+"\nEverything went well.");
                 return gson.toJson(userService.getUser(user.getPseudo()));
             } else {
                 logger.error("Called POST \"user/v1/login\" with data \n"+credentials+"\n went wrong : credentials don't match.");
@@ -141,7 +144,7 @@ public class UserController extends Controller{
     @DELETE
     public void deleteUser(@PathParam("pseudo") String pseudo) {
         try {
-            String logs = "Called DELETE \"user/v1/"+pseudo+"\". Everything went right.";
+            String logs = "Called DELETE \"user/v1/"+pseudo+"\". Everything went well.";
             User user = userService.getUser(pseudo);
             userService.deleteUser(pseudo);
             frService.deleteMany(pseudo);

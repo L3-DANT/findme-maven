@@ -32,7 +32,7 @@ public class FriendRequestController extends Controller{
                                    @QueryParam("receiver") String receiver) {
         if(caller != null && receiver != null){
             try{
-                logger.info("Called GET \"friendrequest/v1?caller="+caller+"&receiver="+receiver+"\". Everything went right.");
+                logger.info("Called GET \"friendrequest/v1?caller="+caller+"&receiver="+receiver+"\". Everything went well.");
                 return gson.toJson(frService.getFriendRequestByPseudos(caller,receiver));
             }catch (NotFoundException e){
                 logger.error("Calling GET \"friendrequest/v1?caller="+caller+"&receiver="+receiver+"\" threw NotFoundException.",e);
@@ -45,7 +45,7 @@ public class FriendRequestController extends Controller{
                 logger.error("Calling GET \"friendrequest/v1?receiver="+receiver+"\" threw NotFoundException : User "+ receiver +" doesn't exist.",e);
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
-            logger.info("Called GET \"friendrequest/v1?receiver="+receiver+"\". Everything went right.");
+            logger.info("Called GET \"friendrequest/v1?receiver="+receiver+"\". Everything went well.");
             return gson.toJson(frService.findByReceiver(receiver));
         } else {
             try {
@@ -54,7 +54,7 @@ public class FriendRequestController extends Controller{
                 logger.error("Calling GET \"friendrequest/v1?caller="+caller+"\" threw NotFoundException : User "+ caller +" doesn't exist.",e);
                 throw new WebApplicationException(Response.Status.NOT_FOUND);
             }
-            logger.info("Called GET \"friendrequest/v1?caller="+caller+"\". Everything went right.");
+            logger.info("Called GET \"friendrequest/v1?caller="+caller+"\". Everything went well.");
             return gson.toJson(frService.findByCaller(caller));
         }
 
@@ -90,7 +90,7 @@ public class FriendRequestController extends Controller{
                 acceptFriendRequest(fr);
             } else {
                 frService.insertFriendRequest(fr);
-                logger.info("Called PUT \"friendrequest/v1\" with data \n"+gson.toJson(fr)+"\nEverything went right.");
+                logger.info("Called PUT \"friendrequest/v1\" with data \n"+gson.toJson(fr)+"\nEverything went well.");
             }
         } catch(NotFoundException e) {
             logger.info("Calling PUT \"friendrequest/v1\" threw NotFoundException."+fr.getCaller()+" or "+fr.getReceiver()+" doesn't exist.");
@@ -115,7 +115,7 @@ public class FriendRequestController extends Controller{
         try {
             userService.addFriend(fr.getCaller(), fr.getReceiver());
             frService.deleteOne(fr);
-            logger.info("Called POST \"friendrequest/v1\" with data \n"+gson.toJson(fr)+"\nEverything went right.");
+            logger.info("Called POST \"friendrequest/v1\" with data \n"+gson.toJson(fr)+"\nEverything went well.");
         } catch (NotFoundException e) {
             logger.info("Calling POST \"friendrequest/v1\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -141,7 +141,7 @@ public class FriendRequestController extends Controller{
         }
         try {
             frService.deleteOne(new FriendRequest(caller,receiver));
-            logger.info("Called DELETE \"friendrequest/v1?caller="+caller+"&receiver="+receiver+"\". Everything went right");
+            logger.info("Called DELETE \"friendrequest/v1?caller="+caller+"&receiver="+receiver+"\". Everything went well");
         } catch (NotFoundException e) {
             logger.info("Calling DELETE DELETE \"friendrequest/v1?caller="+caller+"&receiver="+receiver+"\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);

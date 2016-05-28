@@ -88,10 +88,8 @@ public class UserService {
         List<String> ret = null;
 
 
-        if(user.getLatitude() != 0)
-            insert.setLatitude(user.getLatitude());
-        if(user.getLongitude() != 0)
-            insert.setLongitude(user.getLongitude());
+        insert.setLatitude(user.getLatitude());
+        insert.setLongitude(user.getLongitude());
         if(user.getPhoneNumber() != null)
             insert.setPhoneNumber(user.getPhoneNumber());
         if(user.getState() != null)
@@ -113,7 +111,6 @@ public class UserService {
                 }
             }
         }
-
         dao.replaceOne(insert);
         return ret == null  ? null : ret.toArray(new String[ret.size()]);
     }
