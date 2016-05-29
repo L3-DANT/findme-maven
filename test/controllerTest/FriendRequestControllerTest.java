@@ -5,14 +5,7 @@ import exceptions.NotFoundException;
 import models.FriendRequest;
 import models.User;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import services.FriendRequestService;
-import services.UserService;
-import utils.DatabaseUtils;
-
-import javax.ws.rs.PUT;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
@@ -100,7 +93,7 @@ public class FriendRequestControllerTest extends AbstractControllerTest{
 
     }
 
-    @PUT
+    @Test
     public void PUT401() {
         String s = "{\"caller\":\"" + fr.getCaller() + "\",\"receiver\":\"" + fr.getReceiver() + "\"}";
         Response response = target("friendrequest/v1").request().put(Entity.json(s));
