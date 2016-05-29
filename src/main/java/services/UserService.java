@@ -112,11 +112,12 @@ public class UserService {
                     ret.add(tmp.getPseudo());
                 } else {
                     tmp.setPassword(null);
-                    tmp.clearFriendList();
+                    tmp.setFriendList(null);
                     insert.addFriend(tmp);
                 }
             }
         }
+        insert.clearFriendList();
         for (User friend : user.getFriendList()) {
             friend.setFriendList(null);
             insert.addFriend(friend);
