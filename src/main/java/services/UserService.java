@@ -29,6 +29,9 @@ public class UserService {
         list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84461f,2.35221f,User.State.ONLINE,"+33 6 02 24 17 93"));
         list.add(new User("Adrien",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84427f,2.35865f,User.State.AWAY,"0606060606"));
         list.add(new User("Olivier",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84138f,2.35972f,User.State.OFFLINE,"0606060606"));
+        list.get(0).addFriend(list.get(1));
+        list.get(4).addFriend(list.get(1));
+        list.get(4).addFriend(list.get(2));
         for (User user : list) {
             try {
                 dao.insertOne(user);
@@ -50,6 +53,9 @@ public class UserService {
     public User insertUser(User user) throws DuplicateDataException {
         if(user.getPassword() != null){
             user.setPassword(BCrypt.hashpw(user.getPassword(), (BCrypt.gensalt(saltSize))));
+        }
+        for (User friend : user.getFriendList()) {
+            friend.setFriendList(null);
         }
         return dao.insertOne(user);
     }
@@ -111,6 +117,10 @@ public class UserService {
                 }
             }
         }
+        for (User friend : user.getFriendList()) {
+            friend.setFriendList(null);
+            insert.addFriend(friend);
+        }
         dao.replaceOne(insert);
         return ret == null  ? null : ret.toArray(new String[ret.size()]);
     }
@@ -159,6 +169,7 @@ public class UserService {
             friend.setLatitude(tmp.getLatitude());
             friend.setLongitude(tmp.getLongitude());
             friend.setState(tmp.getState());
+            friend.setFriendList(null);
         }
         return user;
     }
