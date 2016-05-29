@@ -34,12 +34,9 @@ public class UserController extends Controller{
     public String getUser(@PathParam("pseudo") String pseudo){
         try {
             String user = gson.toJson(userService.getUser(pseudo));
-            String s = "Called GET \"user/v1/"+pseudo+"\". Everything went well.";
-            System.out.println(s);
-            logger.info(s);
+            logger.info("Called GET \"user/v1/"+pseudo+"\". Everything went well.");
             return user;
         } catch (NotFoundException e) {
-            System.out.println(e.toString());
             logger.error("Calling GET \"user/v1/"+pseudo+"\" threw NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);
         }
