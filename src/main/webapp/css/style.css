@@ -1,0 +1,41 @@
+.displayDocumentation{
+    padding:5px;
+}
+
+.get{
+    background-color:#0f6ab4;
+    color:white;
+}
+
+.post,.put{
+    background-color:#10a54a;
+    color:white;
+}
+
+.delete{
+    background-color:#a41e22;   
+    color:white;
+}
+
+.documentation{
+    margin:0px;
+    border: 1px solid transparent;
+    border-color: #adadad;
+    border-radius: 4px;
+}
+
+.getD{
+    background-color:#e7f0f7;
+}
+
+.postD,.putD{
+    background-color:#e7f6ec;;
+}
+
+.deleteD{
+    background-color:#f5e8e8;   
+}
+
+.doc{
+    padding: 20px;
+}
