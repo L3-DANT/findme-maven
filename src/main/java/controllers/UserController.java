@@ -95,7 +95,7 @@ public class UserController extends Controller{
                 }
             }
             logger.info(logs);
-            return gson.toJson(user);
+            return gson.toJson(userService.getUser(user.getPseudo()));
         } catch (NotFoundException e) {
             logger.error("Calling POST \"user/v1\" with data \n"+userAsString+"\nthrew NotFoundException.",e);
             throw new WebApplicationException(Response.Status.NOT_FOUND);

@@ -24,9 +24,9 @@ public class UserService {
         dao.clearCollection();
         List<User> list = new ArrayList<User>();
         list.add(new User("Antoine",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84927f,2.35268f, User.State.ONLINE,"0650555075"));
-        list.add(new User("François",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84862f,2.36071f,User.State.ONLINE,"06 60 76 99 44"));
+        list.add(new User("François",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84862f,2.36071f,User.State.ONLINE,"0660769944"));
         list.add(new User("Maxime",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84723f,2.35835f,User.State.ONLINE,"+33667479299"));
-        list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84461f,2.35221f,User.State.ONLINE,"+33 6 02 24 17 93"));
+        list.add(new User("Nicolas",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84461f,2.35221f,User.State.ONLINE,"+33602241793"));
         list.add(new User("Adrien",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84427f,2.35865f,User.State.AWAY,"0606060606"));
         list.add(new User("Olivier",BCrypt.hashpw("123", (BCrypt.gensalt(saltSize))), 48.84138f,2.35972f,User.State.OFFLINE,"0606060606"));
         list.get(0).addFriend(list.get(1));
