@@ -12,14 +12,14 @@ import javax.ws.rs.GET;
 import java.io.IOException;
 
 
-    @Path("/documentation")
-    public class DocumentationController extends HttpServlet{
+@Path("/documentation")
+public class DocumentationController extends HttpServlet{
 
-        @GET
-        public void getHome(@Context HttpServletRequest request,
-                            @Context HttpServletResponse response) throws ServletException, IOException {
-            request.getRequestDispatcher("/WEB-INF/views/documentation.html")
-                    .forward(request, response);
-        }
-
+    @GET
+    public void getHome(@Context HttpServletRequest request,
+                        @Context HttpServletResponse response) throws ServletException, IOException {
+        request.getRequestDispatcher("/WEB-INF/views/documentation.html")
+                .forward(request, response);
     }
+
+}
