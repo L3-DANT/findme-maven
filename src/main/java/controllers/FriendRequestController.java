@@ -76,12 +76,13 @@ public class FriendRequestController extends Controller{
             User user1 = userService.getUser(fr.getCaller());
             User user2 = userService.getUser(fr.getReceiver());
             if(user1.getFriendList().size() > user2.getFriendList().size()){
-                if(user2.getFriendList().contains(user1))
-                    logger.error("Calling PUT \"friendrequest/v1\" went wrong : "+user1.getPseudo()+" and "+user2.getPseudo()+" are alredy friends.");
-                throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+                if(user2.getFriendList().contains(user1)) {
+                    logger.error("Calling PUT \"friendrequest/v1\" went wrong : " + user1.getPseudo() + " and " + user2.getPseudo() + " are already friends.");
+                    throw new WebApplicationException(Response.Status.UNAUTHORIZED);
+                }
             } else {
                 if(user1.getFriendList().contains(user2)){
-                    logger.error("Calling PUT \"friendrequest/v1\" went wrong : "+user1.getPseudo()+" and "+user2.getPseudo()+" are alredy friends.");
+                    logger.error("Calling PUT \"friendrequest/v1\" went wrong : "+user1.getPseudo()+" and "+user2.getPseudo()+" are already friends.");
                     throw new WebApplicationException(Response.Status.UNAUTHORIZED);
                 }
             }
