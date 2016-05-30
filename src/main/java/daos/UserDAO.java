@@ -88,7 +88,6 @@ public class UserDAO extends DAO {
         if(formerDoc == null)
             throw new NotFoundException("User not found");
         Document newDoc =  new Document(Document.parse(gson.toJson(user)));
-        System.out.println(newDoc);
         coll.replaceOne(formerDoc,newDoc);
         return user;
     }

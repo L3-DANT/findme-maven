@@ -117,11 +117,6 @@ public class UserService {
                 }
             }
         }
-        insert.clearFriendList();
-        for (User friend : user.getFriendList()) {
-            friend.setFriendList(null);
-            insert.addFriend(friend);
-        }
         dao.replaceOne(insert);
         return ret == null  ? null : ret.toArray(new String[ret.size()]);
     }
