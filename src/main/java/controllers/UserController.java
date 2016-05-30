@@ -84,13 +84,13 @@ public class UserController extends Controller{
                     && user.getPassword() == null && (user.getFriendList() == null || user.getFriendList().size() == 0) && user.getPhoneNumber() == null) {
                 userService.updateCoordinates(user);
                 user.setFriendList(null);
-                pusher.trigger("private-"+user.getPseudo(),"position-updated",user);
+                pusher.trigger(user.getPseudo(),"position-updated",user);
                 logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went well.\nPusher event \"position-updated\" triggered with data\n"+gson.toJson(user);
             } else {
                 String[] userList = userService.updateUser(user);
                 logs = "Called POST \"user/v1\" with data\n"+userAsString+"\nEverything went well.";
                 if (userList != null) {
-                    pusher.trigger("private-" + user.getPseudo(), "friends-removed", userList);
+                    pusher.trigger(user.getPseudo(), "friends-removed", userList);
                     logs+= "\nPusher event \"friends-removed\" triggered with data\n"+gson.toJson(userList);
                 }
             }
@@ -150,7 +150,7 @@ public class UserController extends Controller{
                 for (int i = 0 ; i < userList.length ; i++) {
                     userList[i] = user.getFriendList().get(i).getPseudo();
                 }
-                pusher.trigger("private-"+pseudo,"friends-removed",userList);
+                pusher.trigger(pseudo,"friends-removed",userList);
                 logs+= "\nPusher event \"friends-removed\" triggered with data\n"+gson.toJson(userList);
             }
             logger.info(logs);

@@ -84,7 +84,7 @@ public class UserServiceTest {
         verify(mock, times(1)).setPassword(anyString());
         //make sure the user has one friend
         verify(mock,times(1)).addFriend(any(User.class));
-        verify(userDAO,times(4)).findOneByPseudo(anyString());
+        verify(userDAO,times(3)).findOneByPseudo(anyString());
         verify(userDAO,times(3)).replaceOne(any(User.class));
 
 
