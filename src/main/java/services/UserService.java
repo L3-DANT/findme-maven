@@ -105,19 +105,17 @@ public class UserService {
         if(listUser != null && listUser.size() < listUserDB.size()) {
             ret = new ArrayList<String>();
             for (User iter : listUserDB) {
-                User tmp = dao.findOneByPseudo(iter.getPseudo());
-                if(!listUser.contains(iter)) {
+                if (!listUser.contains(iter)) {
+                    User tmp = dao.findOneByPseudo(iter.getPseudo());
                     tmp.removeFriend(insert);
                     dao.replaceOne(tmp);
                     ret.add(tmp.getPseudo());
-                } else {
-                    tmp.setPassword(null);
-                    tmp.clearFriendList();
-                    insert.addFriend(tmp);
                 }
             }
         }
-        for (User friend : user.getFriendList()) {
+        insert.clearFriendList();
+        for (User friend : listUser) {
+            friend.setPassword(null);
             friend.setFriendList(null);
             insert.addFriend(friend);
         }
