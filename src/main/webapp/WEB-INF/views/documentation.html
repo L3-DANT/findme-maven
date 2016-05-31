@@ -1,0 +1,333 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FindMe - API Documentation</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+
+</head>
+<body>
+
+<h1 class="text-center">FindMe - API Documentation</h1>
+<div class="row col-xs-offset-2 col-xs-8">
+
+    <h3 class="text-center">Friend Requests</h3>
+
+    <div id="getFriendRequest">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#e7f0f7;">
+            <span class="col-xs-2 get">GET</span>
+            <span class="col-xs-6">/findme/api/friendrequest/v1?caller={pseudo}&receiver={pseudo}</span>
+            <span class="col-xs-4">get the friendrequest</span>
+        </button><br>
+        <div class="row col-xs-12 documentation getD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Caller : <input type="text" id="caller" class="form-control"><br>
+                    Receiver : <input type="text" id="receiver" class="form-control"><br>
+                    <button id="trygetFriendRequest" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                @param caller the user that asked or received the {@link FriendRequest} <br>
+                @param receiver the user that asked or received the {@link FriendRequest} <br>
+                @return the {FriendRequest} if two parameters are given, or a list of pseudos depending on which parameter has been given <br>
+                @throws WebApplicationException 404 is the {@link FriendRequest} can't be found or if the given pseudo is not related to a {@link User#pseudo} in Database <br>
+            </div>
+        </div>
+    </div>
+
+    <div id="putFriendRequest">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#F6F2E7;">
+            <span class="col-xs-2 put">PUT</span>
+            <span class="col-xs-6">/findme/api/friendrequest/v1</span>
+            <span class="col-xs-4">create the friendrequest</span>
+        </button><br>
+        <div class="row col-xs-12 documentation putD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Caller : <input type="text" id="caller" class="form-control"><br>
+                    Receiver : <input type="text" id="receiver" class="form-control"><br>
+                    <button id="tryputFriendRequest" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Creates a {@link FriendRequest} related to two users<br>
+                If the opposed {@link FriendRequest} already exists, makes the two {@link User} friends.<br>
+                @param fr the parsed json<br>
+                @throws WebApplicationException 401 if the users are already friends<br>
+                @throws WebApplicationException 404 if at least one of the users in the {@link FriendRequest} doesn't exist in database<br>
+                @throws WebApplicationException 409 if the {@link FriendRequest}<br>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="postFriendRequest">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#e7f6ec">
+            <span class="col-xs-2 post">POST</span>
+            <span class="col-xs-6">/findme/api/friendrequest/v1</span>
+            <span class="col-xs-4">accept the friendrequest</span>
+        </button><br>
+        <div class="row col-xs-12 documentation postD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Caller : <input type="text" id="caller" class="form-control"><br>
+                    Receiver : <input type="text" id="receiver" class="form-control"><br>
+                    <button id="trypostFriendRequest" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Accepts a {@link FriendRequest}, which means removing it from database and <br>
+                adding the first {@link User} in the second's {@link User#friendList} and reversely <br>
+                @param fr the parsed json <br>
+                @throws WebApplicationException 404 if the {@link FriendRequest} can't be found <br>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteFriendRequest">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#f5e8e8;">
+            <span class="col-xs-2 delete">DELETE</span>
+            <span class="col-xs-6">/findme/api/friendrequest/v1?caller={pseudo}&receiver={pseudo}</span>
+            <span class="col-xs-4">decline the friendrequest</span>
+        </button><br>
+        <div class="row col-xs-12 documentation deleteD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Caller : <input type="text" id="caller" class="form-control"><br>
+                    Receiver : <input type="text" id="receiver" class="form-control"><br>
+                    <button id="trydeleteFriendRequest" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Declines a {@link FriendRequest}, which means removing it from database <br>
+                @param caller the caller (or receiver) <br>
+                @param receiver the receiver (or caller) <br>
+                @throws WebApplicationException 404 if the {@link FriendRequest} can't be found <br>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="row col-xs-offset-2 col-xs-8">
+    <h3 class="text-center">Users</h3>
+
+    <div id="getUser">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#e7f0f7;">
+            <span class="col-xs-2 get">GET</span>
+            <span class="col-xs-6">/findme/api/user/v1/{pseudo}</span>
+            <span class="col-xs-4">get the user</span>
+        </button><br>
+        <div class="row col-xs-12 documentation getD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Pseudo : <input type="text" id="pseudo" class="form-control"><br>
+                    <button type="submit" id="trygetUser" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Gets the user and updates its {@link User#friendList} <br>
+                @param pseudo the pseudo that identifies the {@link User} <br>
+                @return the {@link User} <br>
+                @throws WebApplicationException 404 if the {@link User} can't be found <br>
+            </div>
+        </div>
+    </div>
+
+    <div id="putUser">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#F6F2E7;">
+            <span class="col-xs-2 put">PUT</span>
+            <span class="col-xs-6">/findme/api/user/v1</span>
+            <span class="col-xs-4">create a user</span>
+        </button><br>
+        <div class="row col-xs-12 documentation putD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Pseudo : <input type="text" id="pseudo" class="form-control"><br>
+                    Password : <input type="text" id="password" class="form-control"><br>
+                    Latitude : <input type="text" id="latitude" class="form-control"><br>
+                    Longitude : <input type="text" id="longitude" class="form-control"><br>
+                    FriendList : <input type="text" id="friendList" class="form-control"><br>
+                    Phone number : <input type="text" id="phoneNumber" class="form-control"><br>
+                    State : <input type="text" id="state" class="form-control"><br>
+                    <button id="tryputUser" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Inserts a {@link User} in database <br>
+                @param userAsString the user to put in database <br>
+                @return the created {@link User} <br>
+                @throws WebApplicationException 409 if the {@link User} is already in databse    <br>
+            </div>
+        </div>
+    </div>
+
+    <div id="postUser">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#e7f6ec;">
+            <span class="col-xs-2 post">POST</span>
+            <span class="col-xs-6">/findme/api/user/v1</span>
+            <span class="col-xs-4">update the user</span>
+        </button><br>
+        <div class="row col-xs-12 documentation postD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Pseudo : <input type="text" id="pseudo" class="form-control"><br>
+                    Password : <input type="text" id="password" class="form-control"><br>
+                    Latitude : <input type="text" id="latitude" class="form-control"><br>
+                    Longitude : <input type="text" id="longitude" class="form-control"><br>
+                    FriendList : <input type="text" id="friendList" class="form-control"><br>
+                    Phone number : <input type="text" id="phoneNumber" class="form-control"><br>
+                    State : <input type="text" id="state" class="form-control"><br>
+                    <button id="trypostUser" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Updates given {@link User} in database<br>
+                If only the {@link User#pseudo}, {@link User#latitude} and {@link User#longitude} are given, triggers a "position-updated" even on {@link Pusher}<br>
+                If friends are removed, sends a "friends-removed" event on {@link Pusher}<br>
+                @param userAsString the {@link User} to update<br>
+                @return the serialized {@link User}<br>
+                @throws WebApplicationException 404 if the {@link User} can't be found<br>
+                @throws WebApplicationException 400 if the given {@link User} has a bigger {@link User#friendList}, or a same sized one with different friends<br>
+                To manage friends, please use {@link FriendRequestController}<br>
+                @see Pusher<br>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteUser">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#f5e8e8">
+            <span class="col-xs-2 delete">DELETE</span>
+            <span class="col-xs-6">/findme/api/user/v1/{pseudo}</span>
+            <span class="col-xs-4">delate the user</span>
+        </button><br>
+        <div class="row col-xs-12 documentation deleteD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Pseudo : <input type="text" id="pseudo" class="form-control"><br>
+                    <button type="submit" id="trydeleteUser" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Removes a {@link User} from database, also deletes every {@link models.FriendRequest} related to it<br>
+                @param pseudo the {@link User#pseudo} to remove<br>
+                @throws WebApplicationException 404 if the {@link User} can't be found in database<br>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="postLogin">
+        <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#e7f6ec;">
+            <span class="col-xs-2 post">POST</span>
+            <span class="col-xs-6">/findme/api/user/v1/login</span>
+            <span class="col-xs-4">Connect a user</span>
+        </button><br>
+        <div class="row col-xs-12 documentation postD" style="display:none">
+            <button class="btn btn-default changeToDoc">Documentation</button>
+            <button class="btn btn-default changeToExample">Sandbox</button>
+            <div class="row col-xs-12 example"  style="display:none">
+                <div class="row col-xs-12 requirement">
+                    <h4 class="text-center">Requirement</h4>
+                    Pseudo : <input type="text" id="pseudo" class="form-control"><br>
+                    Password : <input type="text" id="password" class="form-control"><br>
+                    <button id="trypostLogin" class="btn btn-default try">Try</button>
+                </div>
+                <div class="row col-xs-12 url">
+                </div>
+                <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
+                </div>
+            </div>
+            <div class="row col-xs-12 doc">
+                Connects the user to the application <br>
+                @param credentials a json containing a pseudo and a password <br>
+                @return the {@link User} if the credentials match one database {@link User} <br>
+                @throws WebApplicationException 401 if the credentials are wrong <br>
+                @throws WebApplicationException 404 if the {@link User} doesn't exist in database <br>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="http://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="../js/script.js"></script>
+
+</body>
+</html>
