@@ -30,6 +30,9 @@
     border-radius: 4px;
 }
 
+.return {
+    word-wrap: break-word;
+}
 .getD{
     background-color:#e7f0f7;
 }
@@ -37,9 +40,9 @@
 .postD{
     background-color:#e7f6ec;
 }
-.putD{
-    background-color:#F6F2E7;
-
+.putD {
+    background-color: #F6F2E7;
+}
 
 .deleteD{
     background-color:#f5e8e8;

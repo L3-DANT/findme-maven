@@ -12,7 +12,7 @@
 <h1 class="text-center">FindMe - API Documentation</h1>
 <div class="row col-xs-offset-2 col-xs-8">
 
-    <h3 class="text-center">Friend Request</h3>
+    <h3 class="text-center">Friend Requests</h3>
 
     <div id="getFriendRequest">
         <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#e7f0f7;">
@@ -33,6 +33,8 @@
                 <div class="row col-xs-12 url">
                 </div>
                 <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
                 </div>
             </div>
             <div class="row col-xs-12 doc">
@@ -63,6 +65,8 @@
                 <div class="row col-xs-12 url">
                 </div>
                 <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
                 </div>
             </div>
             <div class="row col-xs-12 doc">
@@ -97,6 +101,8 @@
                 </div>
                 <div class="row col-xs-12 data">
                 </div>
+                <div class="row col-xs-12 return">
+                </div>
             </div>
             <div class="row col-xs-12 doc">
                 Accepts a {@link FriendRequest}, which means removing it from database and <br>
@@ -110,7 +116,7 @@
     <div id="deleteFriendRequest">
         <button class="btn btn-default col-xs-12 displayDocumentation" style="background-color:#f5e8e8;">
             <span class="col-xs-2 delete">DELETE</span>
-            <span class="col-xs-6">/findme/api/friendrequest/v1</span>
+            <span class="col-xs-6">/findme/api/friendrequest/v1?caller={pseudo}&receiver={pseudo}</span>
             <span class="col-xs-4">decline the friendrequest</span>
         </button><br>
         <div class="row col-xs-12 documentation deleteD" style="display:none">
@@ -126,6 +132,8 @@
                 <div class="row col-xs-12 url">
                 </div>
                 <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
                 </div>
             </div>
             <div class="row col-xs-12 doc">
@@ -162,6 +170,8 @@
                 </div>
                 <div class="row col-xs-12 data">
                 </div>
+                <div class="row col-xs-12 return">
+                </div>
             </div>
             <div class="row col-xs-12 doc">
                 Gets the user and updates its {@link User#friendList} <br>
@@ -184,16 +194,20 @@
             <div class="row col-xs-12 example"  style="display:none">
                 <div class="row col-xs-12 requirement">
                     <h4 class="text-center">Requirement</h4>
-                    Id : <input type="text" id="id" class="form-control"><br>
                     Pseudo : <input type="text" id="pseudo" class="form-control"><br>
                     Password : <input type="text" id="password" class="form-control"><br>
                     Latitude : <input type="text" id="latitude" class="form-control"><br>
                     Longitude : <input type="text" id="longitude" class="form-control"><br>
+                    FriendList : <input type="text" id="friendList" class="form-control"><br>
+                    Phone number : <input type="text" id="phoneNumber" class="form-control"><br>
+                    State : <input type="text" id="state" class="form-control"><br>
                     <button id="tryputUser" class="btn btn-default try">Try</button>
                 </div>
                 <div class="row col-xs-12 url">
                 </div>
                 <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
                 </div>
             </div>
             <div class="row col-xs-12 doc">
@@ -217,16 +231,20 @@
             <div class="row col-xs-12 example"  style="display:none">
                 <div class="row col-xs-12 requirement">
                     <h4 class="text-center">Requirement</h4>
-                    Id : <input type="text" id="id" class="form-control"><br>
                     Pseudo : <input type="text" id="pseudo" class="form-control"><br>
                     Password : <input type="text" id="password" class="form-control"><br>
                     Latitude : <input type="text" id="latitude" class="form-control"><br>
                     Longitude : <input type="text" id="longitude" class="form-control"><br>
+                    FriendList : <input type="text" id="friendList" class="form-control"><br>
+                    Phone number : <input type="text" id="phoneNumber" class="form-control"><br>
+                    State : <input type="text" id="state" class="form-control"><br>
                     <button id="trypostUser" class="btn btn-default try">Try</button>
                 </div>
                 <div class="row col-xs-12 url">
                 </div>
                 <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
                 </div>
             </div>
             <div class="row col-xs-12 doc">
@@ -262,6 +280,8 @@
                 </div>
                 <div class="row col-xs-12 data">
                 </div>
+                <div class="row col-xs-12 return">
+                </div>
             </div>
             <div class="row col-xs-12 doc">
                 Removes a {@link User} from database, also deletes every {@link models.FriendRequest} related to it<br>
@@ -291,6 +311,8 @@
                 <div class="row col-xs-12 url">
                 </div>
                 <div class="row col-xs-12 data">
+                </div>
+                <div class="row col-xs-12 return">
                 </div>
             </div>
             <div class="row col-xs-12 doc">
