@@ -7,13 +7,19 @@
     color:white;
 }
 
-.post,.put{
+.post{
     background-color:#10a54a;
     color:white;
 }
 
+.put{
+
+    background-color:#BD7100;
+    color:white;
+}
+
 .delete{
-    background-color:#a41e22;   
+    background-color:#a41e22;
     color:white;
 }
 
@@ -28,12 +34,15 @@
     background-color:#e7f0f7;
 }
 
-.postD,.putD{
-    background-color:#e7f6ec;;
+.postD{
+    background-color:#e7f6ec;
 }
+.putD{
+    background-color:#F6F2E7;
+
 
 .deleteD{
-    background-color:#f5e8e8;   
+    background-color:#f5e8e8;
 }
 
 .doc{
